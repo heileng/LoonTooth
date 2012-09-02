@@ -1,0 +1,4 @@
+<?xml version= "1.0" encoding = "utf-8"?>
+<resources>
+ <drawable name ="gray_rectangle">#717171</drawable>
+</resources>

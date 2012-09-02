@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">LoonTooth</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="create_connection">创建连接</string>
+    <string name="search_join">搜索加入</string>
+    <string name="title_activity_main">LoonTooth</string>
+    <string name="overflow">更多</string>
+    <string name="about">关于</string>
+
+    <string-array name="property_array">
+        <item>name</item>
+        <item>type</item>
+        <item>filepath</item>
+        <item>size</item>
+        <item>date_modifiy</item>
+    </string-array>
+        <string name="is_searching">正在搜索中……</string>
+
+</resources>
