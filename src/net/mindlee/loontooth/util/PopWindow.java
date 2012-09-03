@@ -5,7 +5,6 @@ import net.mindlee.loontooth.adapter.DownMenuAdapter;
 import net.mindlee.loontooth.gui.MainActivity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ListView;
@@ -28,10 +27,6 @@ public class PopWindow {
 		downMenuPopWindow.setOutsideTouchable(true);
 		downMenuPopWindow.setWidth(MainActivity.SCREEN_WIDTH / 3);
 		downMenuPopWindow.setBackgroundDrawable(new ColorDrawable(0));
-
-		Log.w("popWindow是否聚焦", "" + downMenuPopWindow.isFocusable());
-		Log.w("popWindow是否可点", "" + downMenuPopWindow.isTouchable());
-		Log.w("popWindow外部是否可点", "" + downMenuPopWindow.isOutsideTouchable());
 
 		downMenuListView = (ListView) downMenuLayout
 				.findViewById(R.id.downmenu_listView);

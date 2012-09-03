@@ -5,6 +5,7 @@ import net.mindlee.loontooth.adapter.DeviceAdapter;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.Client;
 import net.mindlee.loontooth.bluetooth.Server;
+import net.mindlee.loontooth.util.Dialog;
 import net.mindlee.loontooth.util.Tools;
 import android.app.ActionBar;
 import android.app.TabActivity;
@@ -40,10 +41,12 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private Client client = new Client(this);
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
+	private Dialog dialog;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		dialog = new Dialog(this);
 
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -77,8 +80,8 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 			DisplayToast("视频");
 		} else if (tabId.equals("tab_browse")) {
 			DisplayToast("文件");
-		} else if (tabId.equals("tab_history")) {
-			 DisplayToast("历史");
+		} else if (tabId.equals("tab_inbox")) {
+			 DisplayToast("收件箱");
 		}
 	}
 
@@ -102,7 +105,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 			deviceListView.setAdapter(deviceAdapter);
 
 		} else if (item.getItemId() == R.id.overflow) {
-
+			dialog.createMenuDialog();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -136,10 +139,10 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		tabBrowse.setContent(new Intent(this, BrowseActivity.class));
 		tabHost.addTab(tabBrowse);
 
-		tabHistory = tabHost.newTabSpec("tab_history");
-		tabHistory.setIndicator(tabIndicator("历史",
-				R.drawable.history_selector));
-		tabHistory.setContent(new Intent(this, HistoryActivity.class));
+		tabHistory = tabHost.newTabSpec("tab_inbox");
+		tabHistory.setIndicator(tabIndicator("收件箱",
+				R.drawable.inbox_selector));
+		tabHistory.setContent(new Intent(this, InBoxActivity.class));
 		tabHost.addTab(tabHistory);
 		
 		tabHost.setCurrentTab(1);// 启动时显示第一个标签页

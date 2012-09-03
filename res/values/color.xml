@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <drawable name="white">#FFFFFFFF</drawable>
-    <drawable name="black">#000000</drawable>
-    <drawable name="blue">#0000FF</drawable>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="blue">#0000FF</color>
+    <color name="gray">#717171</color>
 
 </resources>

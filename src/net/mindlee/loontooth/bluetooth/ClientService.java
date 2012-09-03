@@ -20,11 +20,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
 
-/**
- * 蓝牙模块客户端主控制Service
- * @author GuoDong
- *
- */
 public class ClientService extends Service {
 	private Context service = this;
 	//搜索到的远程设备集合

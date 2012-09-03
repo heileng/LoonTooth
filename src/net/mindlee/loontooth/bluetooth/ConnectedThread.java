@@ -10,11 +10,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 	
-/**
- * 蓝牙通讯线程
- * @author GuoDong
- *
- */
 public class ConnectedThread extends Thread {
 
 	private Handler serviceHandler;		//与Service通信的Handler

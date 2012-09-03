@@ -6,11 +6,6 @@ import java.util.UUID;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
-/**
- * 蓝牙工具类
- * @author GuoDong
- *
- */
 public class BluetoothTools {
 
 	private static BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();

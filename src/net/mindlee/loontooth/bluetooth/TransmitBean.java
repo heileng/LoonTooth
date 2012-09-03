@@ -5,11 +5,6 @@ import java.io.Serializable;
 
 import android.net.Uri;
 
-/**
- * 用于传输的数据类
- * @author GuoDong
- *
- */
 public class TransmitBean implements Serializable{
 
 	private String msg = "";
@@ -30,6 +25,4 @@ public class TransmitBean implements Serializable{
 	public File getData() {
 		return data;
 	}
-	
-	
 }

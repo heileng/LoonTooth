@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="9dip"
         android:src="@drawable/folder_light" />
-
+
     <TextView
         android:id="@+id/filePath"
         android:layout_width="wrap_content"
@@ -18,7 +18,8 @@
         android:layout_gravity="center_vertical"
         android:layout_marginRight="10dip"
         android:text="/sdcard/hah/xixi/hoh"
-        android:textSize="15sp"
+        android:textSize="16sp"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
         android:textStyle="bold" />
 
 </LinearLayout>

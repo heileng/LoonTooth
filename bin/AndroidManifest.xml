@@ -10,6 +10,8 @@
     <!-- BlueTooth Permission -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -22,6 +24,7 @@
             android:name=".bluetooth.ClientService"
             android:enabled="true" >
         </service>
+
         <activity
             android:name="net.mindlee.loontooth.gui.MainActivity"
             android:label="@string/title_activity_main" >
@@ -37,7 +40,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".gui.HistoryActivity"
+            android:name=".gui.InBoxActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" >
         </activity>
@@ -59,4 +62,3 @@
     </application>
 
 </manifest>
-

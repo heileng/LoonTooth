@@ -53,7 +53,7 @@ public class Photo {
         String size = "\t大小："
                 + Tools.sizeFormat(photoList.get(position).size) + "\n";
         String date_modified = "\t修改日期："
-                + Tools.mSecondsToDate(photoList.get(position).dateModified);
+                + Tools.secondsToDate(photoList.get(position).dateModified);
         String str = "" + name + type + filePath + size + date_modified;
         System.out.print(str);
         builder.setMessage(str); // 对话框显示内容

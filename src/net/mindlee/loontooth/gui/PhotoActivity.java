@@ -32,6 +32,7 @@ public class PhotoActivity extends Activity {
 		PhotoAdapter adapter = new PhotoAdapter(this);
 		photoGridView.setAdapter(adapter);
 		photo = new Photo(this, adapter);
+		
 		photoGridView
         .setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,

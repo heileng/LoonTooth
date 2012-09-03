@@ -16,11 +16,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
 
-/**
- * 蓝牙模块服务器端主控制Service
- * @author GuoDong
- *
- */
 public class ServerService extends Service {
 
 	//蓝牙适配器

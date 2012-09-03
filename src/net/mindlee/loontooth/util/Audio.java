@@ -60,7 +60,7 @@ public class Audio {
 		String size = "\t大小："
 				+ Tools.sizeFormat(audioList.get(position).size) + "\n";
 		String date_modified = "\t修改日期："
-				+ Tools.mSecondsToDate(audioList.get(position).dateModified);
+				+ Tools.secondsToDate(audioList.get(position).dateModified);
 		String str = "" + name + type + filePath + size + date_modified;
 		System.out.print(str);
 		builder.setMessage(str); // 对话框显示内容

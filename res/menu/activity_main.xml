@@ -5,18 +5,28 @@
         android:icon="@drawable/create_connection"
         android:showAsAction="always"
         android:title="@string/create_connection"/>
-    
     <item
         android:id="@+id/search_join"
         android:icon="@drawable/search_join"
         android:showAsAction="always"
         android:title="@string/search_join"/>
-    
     <item
         android:id="@+id/overflow"
         android:icon="@drawable/ic_action_overflow"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/overflow"/>
+    <item
+        android:id="@+id/photo"
+        android:icon="@drawable/ic_action_overflow"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/overflow"/>
+    <item
+        android:id="@+id/audio"
+        android:icon="@drawable/audio_normal"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="音乐"/>
 
 </menu>

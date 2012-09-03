@@ -36,39 +36,45 @@ public class Tools {
 	public static String sizeFormat(String size) {
 		long num = Long.valueOf(size);
 		String res = null;
+		double sizeKbyte = num / 1024;
 		double sizeMbyte = num / 1024 / 1024;// bytes -> M bytes
 		double sizeGbyte = sizeMbyte / 1024;// bytes -> G bytes
 		DecimalFormat df = new DecimalFormat();
-		
-		if (sizeGbyte < 1) {
-			String style = "#0.00MB";
+		if (sizeMbyte < 1) {//kb
+			String style = "#0.00KB";
 			df.applyPattern(style);
-			res = df.format(sizeMbyte);
+			res = df.format(sizeKbyte);
 		} else {
-			String style = "#0.00GB";
-			df.applyPattern(style);
-			res = df.format(sizeGbyte);
+			if (sizeGbyte < 1) {//mb
+				String style = "#0.00MB";
+				df.applyPattern(style);
+				res = df.format(sizeMbyte);
+			} else {//gb
+				String style = "#0.00GB";
+				df.applyPattern(style);
+				res = df.format(sizeGbyte);
+			}
 		}
 		return res;
 	}
 
 	public static String durationFormat(String duration) {
 		long num = Long.valueOf(duration);
-		long   hour = num / 1000 / 3600;
-		long   minutes = (num / 1000 - hour * 3600) / 60;
-		long   seconds = num / 1000 % 60;
+		long hour = num / 1000 / 3600;
+		long minutes = (num / 1000 - hour * 3600) / 60;
+		long seconds = num / 1000 % 60;
 		DecimalFormat df = new DecimalFormat();
 		String style = "00";
 		df.applyPattern(style);
-		
+
 		String res = df.format(minutes) + ":" + df.format(seconds);
 		if (hour > 0) {
 			res = hour + ":" + res;
-		} 
+		}
 		return res;
 	}
 
-	public static String mSecondsToDate(String timeStr) {
+	public static String secondsToDate(String timeStr) {
 		System.out.println("timeStr" + timeStr);
 		long time = Long.valueOf(timeStr) * 1000;
 		Date date = new Date(time);
