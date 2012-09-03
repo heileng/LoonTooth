@@ -52,10 +52,8 @@ public class PhotoAdapter extends BaseAdapter {
 		if (!cursor.moveToFirst()) {
 			return;
 		}
+		
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-			long size = Long.valueOf(cursor.getString(cursor
-					.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
-
 			PhotoInfo info = new PhotoInfo();
 			info.title = cursor.getString(cursor
 					.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE));
@@ -68,11 +66,16 @@ public class PhotoAdapter extends BaseAdapter {
 			info.dateModified = cursor
 					.getString(cursor
 							.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED));
+			long size = Long.valueOf(cursor.getString(cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)));
 			Log.w("大小", "" + size);
+			//if (size < 100000) {
+				//continue;
+			//}
 			info.print();
 			photoList.add(info);
-
 		}
+		cursor.close();
 	}
 
 	public ArrayList<PhotoInfo> getPhotoList() {

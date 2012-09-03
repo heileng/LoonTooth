@@ -153,6 +153,7 @@ public class AudioAdapter extends BaseAdapter {
 				info.print();
 			}
 		}
+		cursor.close();
 	}
 
 }

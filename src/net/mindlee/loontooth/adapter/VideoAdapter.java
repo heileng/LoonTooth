@@ -75,6 +75,7 @@ public class VideoAdapter extends BaseAdapter {
 
 			} while (cursor.moveToNext());
 		}
+		cursor.close();
 
 	}
 

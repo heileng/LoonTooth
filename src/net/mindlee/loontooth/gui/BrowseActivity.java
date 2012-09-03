@@ -2,6 +2,7 @@ package net.mindlee.loontooth.gui;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
@@ -12,6 +13,7 @@ import net.mindlee.loontooth.util.PopWindow;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -30,6 +32,8 @@ public class BrowseActivity extends Activity {
 	private Dialog dialog = new Dialog(this);
 	private PopupWindow downMenuPopWindow;
 	private PopWindow popWindow;
+	private long mLastBackTime = 0;
+	private long TIME_DIFF = 2 * 1000;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -115,5 +119,19 @@ public class BrowseActivity extends Activity {
 		}
 
 		allFilesListView.setAdapter(new AllFilesAdapter(this, items, paths));
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			long now = new Date().getTime();
+			if (now - mLastBackTime < TIME_DIFF) {
+				return super.onKeyDown(keyCode, event);
+			} else {
+				mLastBackTime = now;
+				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

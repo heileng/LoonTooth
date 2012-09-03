@@ -1,5 +1,7 @@
 package net.mindlee.loontooth.gui;
 
+import java.util.Date;
+
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.DeviceAdapter;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
@@ -8,12 +10,14 @@ import net.mindlee.loontooth.bluetooth.Server;
 import net.mindlee.loontooth.util.Dialog;
 import net.mindlee.loontooth.util.Tools;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +45,10 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private Client client = new Client(this);
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
+	public static ProgressDialog createConnectDialog;
 	private Dialog dialog;
+	private long mLastBackTime = 0;
+	private long TIME_DIFF = 2 * 1000;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +78,20 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		client.onStop(this);
 	}
 
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			long now = new Date().getTime();
+			if (now - mLastBackTime < TIME_DIFF) {
+				return super.onKeyDown(keyCode, event);
+			} else {
+				mLastBackTime = now;
+				Toast.makeText(this, "再点一次将推出", 2000).show();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 	public void onTabChanged(String tabId) {
 		if (tabId.equals("tab_photo")) {
 			DisplayToast("照片");
@@ -81,7 +102,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		} else if (tabId.equals("tab_browse")) {
 			DisplayToast("文件");
 		} else if (tabId.equals("tab_inbox")) {
-			 DisplayToast("收件箱");
+			DisplayToast("收件箱");
 		}
 	}
 
@@ -92,9 +113,11 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		} else if (item.getItemId() == R.id.create_connection) {
 			Tools.logThreadSignature("MainActivity");
 			server.onStart(this);
+		//	createConnectDialog = ProgressDialog.show(this, "", "正在创建连接...",
+			//		true);
 		} else if (item.getItemId() == R.id.search_join) {
-			
 			client.onStart(this);
+
 			DisplayToast("开始搜索");
 			Intent startSearchIntent = new Intent(
 					BluetoothTools.ACTION_START_DISCOVERY);
@@ -140,11 +163,10 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		tabHost.addTab(tabBrowse);
 
 		tabHistory = tabHost.newTabSpec("tab_inbox");
-		tabHistory.setIndicator(tabIndicator("收件箱",
-				R.drawable.inbox_selector));
+		tabHistory.setIndicator(tabIndicator("收件箱", R.drawable.inbox_selector));
 		tabHistory.setContent(new Intent(this, InBoxActivity.class));
 		tabHost.addTab(tabHistory);
-		
+
 		tabHost.setCurrentTab(1);// 启动时显示第一个标签页
 		tabHost.setOnTabChangedListener(this);
 
@@ -195,12 +217,12 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 
 							Intent selectDeviceIntent = new Intent(
 									BluetoothTools.ACTION_SELECTED_DEVICE);
-							selectDeviceIntent.putExtra(BluetoothTools.DEVICE, client
-									.getDeviceList().get(0));
+							selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
+									client.getDeviceList().get(0));
 							sendBroadcast(selectDeviceIntent);
 						} else if (position == 1) {
 							Log.d("点击位置1", "设备");
-						} else if (position == 2){
+						} else if (position == 2) {
 							Log.d("点击位置3", "设备");
 						}
 					}

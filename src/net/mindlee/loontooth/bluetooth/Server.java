@@ -50,7 +50,6 @@ public class Server {
         intentFilter.addAction(BluetoothTools.ACTION_DATA_TO_GAME);
         intentFilter.addAction(BluetoothTools.ACTION_CONNECT_SUCCESS);
         context.registerReceiver(broadcastReceiver, intentFilter);
-        activity.DisplayToast("服务器正在建立连接.......");
         
 	}
 	

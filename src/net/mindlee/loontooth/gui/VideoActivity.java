@@ -1,5 +1,7 @@
 package net.mindlee.loontooth.gui;
 
+import java.util.Date;
+
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
@@ -10,11 +12,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 public class VideoActivity extends Activity {
 	private ListView videoListView;
@@ -22,6 +26,8 @@ public class VideoActivity extends Activity {
 	private PopupWindow downMenuPopWindow;
 	private Video video;
 	private PopWindow popWindow;
+	private long mLastBackTime = 0;
+	private long TIME_DIFF = 2 * 1000;
 
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -72,5 +78,19 @@ public class VideoActivity extends Activity {
 						}
 					}
 				});
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			long now = new Date().getTime();
+			if (now - mLastBackTime < TIME_DIFF) {
+				return super.onKeyDown(keyCode, event);
+			} else {
+				mLastBackTime = now;
+				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

@@ -2,6 +2,7 @@ package net.mindlee.loontooth.gui;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
@@ -13,6 +14,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -35,6 +37,8 @@ public class InBoxActivity extends Activity {
 	private String videoPath = inBoxPath + "/Video";
 	private String photoPath = inBoxPath + "/Photo";
 	private String otherPath = inBoxPath + "/Other";
+	private long mLastBackTime = 0;
+	private long TIME_DIFF = 2 * 1000;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -146,5 +150,19 @@ public class InBoxActivity extends Activity {
 
 		inBoxListView.setAdapter(new InBoxAdapter(this, items, paths));
 
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			long now = new Date().getTime();
+			if (now - mLastBackTime < TIME_DIFF) {
+				return super.onKeyDown(keyCode, event);
+			} else {
+				mLastBackTime = now;
+				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

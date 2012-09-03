@@ -4,17 +4,19 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <GridView
-        android:id="@+id/gridview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dip"
-        android:background="@drawable/menu_border"
-        android:gravity="center"
-        android:horizontalSpacing="10dip"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="10dip" >
-    </GridView>
+
+        <GridView
+            android:id="@+id/gridview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dip"
+            android:background="@drawable/menu_border"
+            android:gravity="center"
+            android:horizontalSpacing="10dip"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dip" >
+        </GridView>
+
 
 </LinearLayout>

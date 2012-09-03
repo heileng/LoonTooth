@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import net.mindlee.loontooth.gui.MainActivity;
 
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
@@ -120,7 +121,8 @@ public class ServerService extends Service {
 		startActivity(discoveryIntent);
 		//开启后台连接线程
 		new ServerConnectThread(serviceHandler).start();
-		
+		//MainActivity.createConnectDialog.dismiss();
+
 		super.onCreate();
 	}
 
