@@ -58,9 +58,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
+                android:layout_marginBottom="-2dip"
+                android:layout_marginLeft="-2dip"
+                android:layout_marginRight="-2dip"
+                android:background="@drawable/blue_border"
                 android:clickable="true"
                 android:longClickable="false"
                 android:measureWithLargestChild="false" >
+
             </TabWidget>
         </LinearLayout>
     </TabHost>

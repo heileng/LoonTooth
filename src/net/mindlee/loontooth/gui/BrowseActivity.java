@@ -98,7 +98,7 @@ public class BrowseActivity extends Activity {
 	}
 
 	private void getFileDir(String filePath) {
-		Toast.makeText(this, filePath, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, filePath, 5).show();
 		items = new ArrayList<String>();
 		paths = new ArrayList<String>();
 		File f = new File(filePath);

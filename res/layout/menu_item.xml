@@ -3,24 +3,30 @@
     android:id="@+id/RelativeLayout_Item"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dip" >
-
+    android:layout_margin="5dip"
+    android:padding="3dip" >
+
+
+
+
     <ImageView
         android:id="@+id/item_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dip"
         android:src="@drawable/menu_set" />
-
+
+
+
+
     <TextView
         android:id="@+id/item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_image"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dip"
-        android:text="设置"
+        android:maxLines="1"
+        android:text="给作者发邮件"
         android:textStyle="bold" />
 
 </RelativeLayout>

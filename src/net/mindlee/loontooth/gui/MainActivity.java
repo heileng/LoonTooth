@@ -94,15 +94,15 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 
 	public void onTabChanged(String tabId) {
 		if (tabId.equals("tab_photo")) {
-			DisplayToast("照片");
+		//	DisplayToast("照片");
 		} else if (tabId.equals("tab_audio")) {
-			DisplayToast("音乐");
+		//	DisplayToast("音乐");
 		} else if (tabId.equals("tab_video")) {
-			DisplayToast("视频");
+		///	DisplayToast("视频");
 		} else if (tabId.equals("tab_browse")) {
-			DisplayToast("文件");
+		//	DisplayToast("文件");
 		} else if (tabId.equals("tab_inbox")) {
-			DisplayToast("收件箱");
+		//	DisplayToast("收件箱");
 		}
 	}
 
@@ -167,7 +167,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		tabHistory.setContent(new Intent(this, InBoxActivity.class));
 		tabHost.addTab(tabHistory);
 
-		tabHost.setCurrentTab(1);// 启动时显示第一个标签页
+		tabHost.setCurrentTab(0);// 启动时显示第一个标签页
 		tabHost.setOnTabChangedListener(this);
 
 	}
@@ -182,7 +182,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	}
 
 	public void DisplayToast(String str) {
-		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, str, 100).show();
 	}
 
 	public PopupWindow createClientPopWindow() {

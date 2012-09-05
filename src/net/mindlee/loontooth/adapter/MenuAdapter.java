@@ -13,7 +13,7 @@ public class MenuAdapter extends BaseAdapter{
 	private int[] menuImageArray = { R.drawable.menu_set, R.drawable.menu_help,
 			R.drawable.menu_about, R.drawable.menu_email,
 			R.drawable.menu_website, R.drawable.menu_play, };
-	private String[] menuNameArray = { "设置", "帮助", "关于", "给作者发邮件", "去作者博客",
+	private String[] menuNameArray = { "设置", "帮助", "关于", "邮件反馈", "作者博客",
 			"轻松一下" };
 
     public MenuAdapter(Context context) {
