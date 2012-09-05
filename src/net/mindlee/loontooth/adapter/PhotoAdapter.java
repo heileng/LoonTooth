@@ -67,24 +67,24 @@ public class PhotoAdapter extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		final ImageView imageView;
-
+		ViewHolder holder = null;
 		if (convertView == null) {
-			imageView = new ImageView(context);
+			holder = new ViewHolder();
+
+			convertView = View.inflate(context, R.layout.photo_item, null);
+			holder.photo = (ImageView) convertView
+					.findViewById(R.id.photo_imageview);
+			convertView.setTag(holder);
 		} else {
-			imageView = (ImageView) convertView;
+			holder = (ViewHolder) convertView.getTag();
 		}
 
-		imageView.setLayoutParams(new GridView.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-		imageView.setBackgroundDrawable(context.getResources().getDrawable(
-				R.drawable.white_border));
+		holder.photo.setImageBitmap(photoList.get(position).getBitmap());
 
-		imageView.setPadding(2, 2, 2, 2);
-		imageView.setImageBitmap(photoList.get(position).getBitmap());
-
-		return imageView;
+		return convertView;
 	}
 
+	class ViewHolder {
+		ImageView photo;
+	}
 }

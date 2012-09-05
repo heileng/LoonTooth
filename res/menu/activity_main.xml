@@ -16,17 +16,5 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/overflow"/>
-    <item
-        android:id="@+id/photo"
-        android:icon="@drawable/ic_action_overflow"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/overflow"/>
-    <item
-        android:id="@+id/audio"
-        android:icon="@drawable/audio_normal"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="音乐"/>
 
 </menu>

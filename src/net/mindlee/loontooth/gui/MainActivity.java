@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -45,7 +46,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private Client client = new Client(this);
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
-	public static ProgressDialog createConnectDialog;
+
 	private Dialog dialog;
 	private long mLastBackTime = 0;
 	private long TIME_DIFF = 2 * 1000;
@@ -61,8 +62,25 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		SCREEN_HEIGHT = displaymetrics.heightPixels;
 		Log.v("SCREEN_WIDTH", "" + SCREEN_WIDTH);
 		Log.v("SCREEN_HEIGHT", "" + SCREEN_HEIGHT);
+		clientPopWindow = createClientPopWindow();
+		deviceAdapter = new DeviceAdapter(this);
+		deviceListView.setAdapter(deviceAdapter);
 
 		setTabHost();
+
+		deviceListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				clientPopWindow.dismiss();
+				Intent selectDeviceIntent = new Intent(
+						BluetoothTools.ACTION_SELECTED_DEVICE);
+				Log.w("点击位置position=", "" + position);
+				Log.w("连接设备名为：", "" + deviceAdapter.getItem(position).getName());
+				selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
+						deviceAdapter.getItem(position));
+				sendBroadcast(selectDeviceIntent);
+			}
+		});
 	}
 
 	public void onStart() {
@@ -94,15 +112,15 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 
 	public void onTabChanged(String tabId) {
 		if (tabId.equals("tab_photo")) {
-		//	DisplayToast("照片");
+			// DisplayToast("照片");
 		} else if (tabId.equals("tab_audio")) {
-		//	DisplayToast("音乐");
+			// DisplayToast("音乐");
 		} else if (tabId.equals("tab_video")) {
-		///	DisplayToast("视频");
+			// / DisplayToast("视频");
 		} else if (tabId.equals("tab_browse")) {
-		//	DisplayToast("文件");
+			// DisplayToast("文件");
 		} else if (tabId.equals("tab_inbox")) {
-		//	DisplayToast("收件箱");
+			// DisplayToast("收件箱");
 		}
 	}
 
@@ -113,19 +131,16 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		} else if (item.getItemId() == R.id.create_connection) {
 			Tools.logThreadSignature("MainActivity");
 			server.onStart(this);
-		//	createConnectDialog = ProgressDialog.show(this, "", "正在创建连接...",
-			//		true);
+
+			if (BluetoothTools.getBTAdapter().isDiscovering()) {
+				Toast.makeText(getApplicationContext(), "创建连接成功，等待朋友加入。。",
+						Toast.LENGTH_SHORT);
+			}
 		} else if (item.getItemId() == R.id.search_join) {
 			client.onStart(this);
 
-			DisplayToast("开始搜索");
-			Intent startSearchIntent = new Intent(
-					BluetoothTools.ACTION_START_DISCOVERY);
-			sendBroadcast(startSearchIntent);
 			View view = View.inflate(this, R.layout.activity_main, null);
-			createClientPopWindow().showAtLocation(view, Gravity.CENTER, 0, 0);
-			deviceAdapter = new DeviceAdapter(this);
-			deviceListView.setAdapter(deviceAdapter);
+			clientPopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
 		} else if (item.getItemId() == R.id.overflow) {
 			dialog.createMenuDialog();
@@ -206,27 +221,6 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 				clientPopWindow.dismiss();
 			}
 		});
-
-		deviceListView
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						if (position == 0) {
-							Log.d("点击位置0", "设备");
-							DisplayToast("选择第一个设备");
-
-							Intent selectDeviceIntent = new Intent(
-									BluetoothTools.ACTION_SELECTED_DEVICE);
-							selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
-									client.getDeviceList().get(0));
-							sendBroadcast(selectDeviceIntent);
-						} else if (position == 1) {
-							Log.d("点击位置1", "设备");
-						} else if (position == 2) {
-							Log.d("点击位置3", "设备");
-						}
-					}
-				});
 
 		return clientPopWindow;
 	}

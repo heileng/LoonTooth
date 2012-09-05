@@ -1,21 +1,15 @@
 package net.mindlee.loontooth.adapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.gui.AudioActivity;
 import net.mindlee.loontooth.gui.MainActivity;
 import net.mindlee.loontooth.util.Tools;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AudioAdapter extends BaseAdapter {
-	private Context context;
+	private AudioActivity context;
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
 	private Bitmap audioBg;
 
@@ -56,7 +50,7 @@ public class AudioAdapter extends BaseAdapter {
 		}
 	}
 
-	public AudioAdapter(Context context, List<AudioInfo> audioList) {
+	public AudioAdapter(AudioActivity context, List<AudioInfo> audioList) {
 		this.context = context;
 		this.audioList = audioList;
 		Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),
@@ -81,8 +75,7 @@ public class AudioAdapter extends BaseAdapter {
 		ViewHolder holder = null;
 		if (convertView == null) {
 			holder = new ViewHolder();
-			convertView = LayoutInflater.from(context).inflate(
-					R.layout.audio_item, null);
+			convertView = View.inflate(context, R.layout.audio_item, null);
 			holder.albumArt = (ImageView) convertView
 					.findViewById(R.id.audio_album_imageView);
 			holder.title = (TextView) convertView
@@ -108,9 +101,7 @@ public class AudioAdapter extends BaseAdapter {
 				holder.albumArt.setImageBitmap(audioList.get(position).bitmap);
 			} else {
 				holder.albumArt.setImageBitmap(audioBg);
-
 			}
-
 		}
 		return convertView;
 	}

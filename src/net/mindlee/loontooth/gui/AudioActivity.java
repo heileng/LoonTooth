@@ -34,7 +34,7 @@ import android.widget.Toast;
 
 public class AudioActivity extends Activity {
 	private ListView audioListView;
-	private int focusAudioListViewItem;
+	private static int focusAudioListViewItem;
 	private PopupWindow downMenuPopWindow;
 	private AudioAdapter audioAdapter;
 	private Audio audio;
@@ -206,7 +206,7 @@ public class AudioActivity extends Activity {
 					}
 					Log.w("已经" + audioList.size(), "总共" + length);
 					publishProgress((int) (audioList.size() * 1.0 / length * 100.0));
-					info.print();
+				//	info.print();
 				}
 			}
 			cursor.close();

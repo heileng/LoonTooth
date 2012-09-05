@@ -1,13 +1,14 @@
 package net.mindlee.loontooth.bluetooth;
 
 
-import java.io.IOException;
+import net.mindlee.loontooth.util.Tools;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 /**
  * 服务器连接线程
@@ -32,10 +33,12 @@ public class ServerConnectThread extends Thread {
 	
 	@Override
 	public void run() {
+		Tools.logThreadSignature("ServerConnectThread");
 		
 		try {
 			serverSocket = adapter.listenUsingRfcommWithServiceRecord("Server", BluetoothTools.PRIVATE_UUID);
 			socket = serverSocket.accept();
+			Log.w("Server   socket", "成功");
 		} catch (Exception e) {
 			//发送连接失败消息
 			serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();

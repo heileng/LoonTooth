@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import net.mindlee.loontooth.util.Tools;
+
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +26,7 @@ public class ConnectedThread extends Thread {
 	 * @param socket
 	 */
 	public ConnectedThread(Handler handler, BluetoothSocket socket) {
+		
 		this.serviceHandler = handler;
 		this.socket = socket;
 		try {
@@ -43,6 +46,7 @@ public class ConnectedThread extends Thread {
 	
 	@Override
 	public void run() {
+		Tools.logThreadSignature("ConnectedThread");
 		while (true) {
 			if (!isRun) {
 				break;

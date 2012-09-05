@@ -17,8 +17,8 @@ public class Client {
 	private List<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
 	private MainActivity activity;
 	
-	public Client(Context context) {
-		activity = (MainActivity) context;
+	public Client(MainActivity context) {
+		activity = context;
 	}
 	
 	public  List<BluetoothDevice> getDeviceList() {
@@ -34,15 +34,15 @@ public class Client {
 			if (BluetoothTools.ACTION_NOT_FOUND_SERVER.equals(action)) {
 				//未发现设备
 				Log.v("客户端", "没有发现设备");
-				activity.DisplayToast("客户端没有发现设备");
+				activity.DisplayToast("没有发现设备");
 				
 			} else if (BluetoothTools.ACTION_FOUND_DEVICE.equals(action)) {
 				//获取到设备对象
 				BluetoothDevice device = (BluetoothDevice)intent.getExtras().get(BluetoothTools.DEVICE);
 				deviceList.add(device);
-				
+				MainActivity.deviceAdapter.addDevice(device);
+				MainActivity.deviceAdapter.notifyDataSetChanged();
 				Log.v("客户端", "发现设备" + device.getName());
-				activity.DisplayToast("发现设备" + device.getName());
 				
 			} else if (BluetoothTools.ACTION_CONNECT_SUCCESS.equals(action)) {
 				
@@ -63,7 +63,6 @@ public class Client {
 	
 	public void onStart(Context context) {
 		Log.d("Client客户端", "onStart");
-		//清空设备列表
 		deviceList.clear();
 		
 		//开启后台service
@@ -82,7 +81,6 @@ public class Client {
 		
 		context.registerReceiver(broadcastReceiver, intentFilter);
 		activity.DisplayToast("客户端已开启");
-		
 	}
 	
 	public void onStop(Context context) {

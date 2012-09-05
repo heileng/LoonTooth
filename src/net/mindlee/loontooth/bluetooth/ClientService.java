@@ -18,6 +18,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ClientService extends Service {
@@ -84,8 +85,6 @@ public class ClientService extends Service {
 				//获取设备
 				BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				discoveredDevices.add(bluetoothDevice);
-
-				 Toast. makeText(service, "搜索到设备", Toast. LENGTH_SHORT).show();
 
 				//发送发现设备广播
 				Intent deviceListIntent = new Intent(BluetoothTools.ACTION_FOUND_DEVICE);
@@ -165,6 +164,7 @@ public class ClientService extends Service {
 	 */
 	@Override
 	public void onCreate() {
+		Log.w("ClientService", "onCreate");
 		//discoveryReceiver的IntentFilter
 		IntentFilter discoveryFilter = new IntentFilter();
 		discoveryFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);

@@ -3,6 +3,8 @@ package net.mindlee.loontooth.bluetooth;
 
 import java.io.IOException;
 
+import net.mindlee.loontooth.util.Tools;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -27,6 +29,7 @@ public class ClientConnectThread extends Thread{
 	
 	@Override
 	public void run() {
+		Tools.logThreadSignature("ClientConnentThread");
 		BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 		try {
 			socket = serverDevice.createRfcommSocketToServiceRecord(BluetoothTools.PRIVATE_UUID);

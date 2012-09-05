@@ -90,9 +90,8 @@ public final class R {
         public static final int white_border=0x7f02003d;
     }
     public static final class id {
-        public static final int RelativeLayout_Item=0x7f09001d;
+        public static final int RelativeLayout_Item=0x7f09001e;
         public static final int all_files_listView=0x7f090001;
-        public static final int audio=0x7f09002d;
         public static final int audio_album_imageView=0x7f09000c;
         public static final int audio_artist_textView=0x7f09000e;
         public static final int audio_listView=0x7f090000;
@@ -101,7 +100,7 @@ public final class R {
         public static final int client_close_button=0x7f090011;
         public static final int client_device_listView=0x7f090012;
         public static final int client_search_device_progressBar=0x7f090013;
-        public static final int create_connection=0x7f090029;
+        public static final int create_connection=0x7f09002a;
         public static final int device_avatar=0x7f090015;
         public static final int device_connect_state=0x7f090017;
         public static final int device_connect_state_icon=0x7f090018;
@@ -109,23 +108,23 @@ public final class R {
         public static final int downmenu_listView=0x7f090019;
         public static final int fileIcon=0x7f09000a;
         public static final int filePath=0x7f09000b;
-        public static final int gridview=0x7f09001c;
+        public static final int gridview=0x7f09001d;
+        public static final int help_or_about=0x7f09001c;
         public static final int icon=0x7f09001a;
         public static final int inbox_listView=0x7f090002;
-        public static final int item_image=0x7f09001e;
-        public static final int item_text=0x7f09001f;
-        public static final int overflow=0x7f09002b;
-        public static final int photo=0x7f09002c;
+        public static final int item_image=0x7f09001f;
+        public static final int item_text=0x7f090020;
+        public static final int overflow=0x7f09002c;
         public static final int photoGridView=0x7f090008;
-        public static final int photoThumbView=0x7f090020;
-        public static final int property=0x7f09002f;
-        public static final int sand=0x7f09002e;
-        public static final int search_join=0x7f09002a;
+        public static final int photo_imageview=0x7f090021;
+        public static final int property=0x7f09002e;
+        public static final int sand=0x7f09002d;
+        public static final int search_join=0x7f09002b;
         public static final int search_state=0x7f090014;
-        public static final int serverEditText=0x7f090022;
-        public static final int serverSendEditText=0x7f090023;
-        public static final int serverSendMsgBtn=0x7f090024;
-        public static final int serverStateText=0x7f090021;
+        public static final int serverEditText=0x7f090023;
+        public static final int serverSendEditText=0x7f090024;
+        public static final int serverSendMsgBtn=0x7f090025;
+        public static final int serverStateText=0x7f090022;
         public static final int tab1=0x7f090003;
         public static final int tab2=0x7f090004;
         public static final int tab3=0x7f090005;
@@ -133,11 +132,11 @@ public final class R {
         public static final int tab5=0x7f090007;
         public static final int textView1=0x7f090010;
         public static final int title=0x7f09001b;
-        public static final int video_duration_textView=0x7f090027;
+        public static final int video_duration_textView=0x7f090028;
         public static final int video_listView=0x7f090009;
-        public static final int video_size_textView=0x7f090028;
-        public static final int video_thumb_imageView=0x7f090025;
-        public static final int video_title_textView=0x7f090026;
+        public static final int video_size_textView=0x7f090029;
+        public static final int video_thumb_imageView=0x7f090026;
+        public static final int video_title_textView=0x7f090027;
     }
     public static final class layout {
         public static final int activity_audio=0x7f030000;
@@ -152,12 +151,13 @@ public final class R {
         public static final int client_device_item=0x7f030009;
         public static final int downmenu=0x7f03000a;
         public static final int downmenu_item=0x7f03000b;
-        public static final int menu_gridview=0x7f03000c;
-        public static final int menu_item=0x7f03000d;
-        public static final int photo_item=0x7f03000e;
-        public static final int server=0x7f03000f;
-        public static final int tab_indicator=0x7f030010;
-        public static final int video_item=0x7f030011;
+        public static final int help_or_about=0x7f03000c;
+        public static final int menu_gridview=0x7f03000d;
+        public static final int menu_item=0x7f03000e;
+        public static final int photo_item=0x7f03000f;
+        public static final int server=0x7f030010;
+        public static final int tab_indicator=0x7f030011;
+        public static final int video_item=0x7f030012;
     }
     public static final class menu {
         public static final int activity_main=0x7f080000;

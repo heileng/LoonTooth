@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import net.mindlee.loontooth.gui.MainActivity;
 
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
@@ -15,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ServerService extends Service {
@@ -103,6 +103,7 @@ public class ServerService extends Service {
 	
 	@Override
 	public void onCreate() {
+		Log.w("ServerService", "onCreate");
 		//ControlReceiver的IntentFilter
 		IntentFilter controlFilter = new IntentFilter();
 		controlFilter.addAction(BluetoothTools.ACTION_START_SERVER);
@@ -121,13 +122,14 @@ public class ServerService extends Service {
 		startActivity(discoveryIntent);
 		//开启后台连接线程
 		new ServerConnectThread(serviceHandler).start();
-		//MainActivity.createConnectDialog.dismiss();
+		Toast.makeText(this, "创建连接成功", Toast.LENGTH_SHORT);
 
 		super.onCreate();
 	}
 
 	@Override
 	public void onDestroy() {
+		Log.w("ServerService", "onDestroy");
 		if (connectedThread != null) {
 			connectedThread.isRun = false;
 		}

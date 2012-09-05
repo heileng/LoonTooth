@@ -12,7 +12,6 @@ import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.Photo;
 import net.mindlee.loontooth.util.PopWindow;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -27,6 +26,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -34,7 +34,7 @@ import android.widget.Toast;
 
 public class PhotoActivity extends Activity {
 	private GridView photoGridView;
-	private static int focusPhotoListItem;
+	private int focusPhotoListItem;
 	private PopupWindow downMenuPopWindow;
 	private Photo photo;
 	private PopWindow popWindow;
@@ -52,17 +52,17 @@ public class PhotoActivity extends Activity {
 		photoGridView.setAdapter(photoAdapter);
 		photo = new Photo(this, photoAdapter);
 		new LoadImagesFromSDCard().execute();
-		photoGridView
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						downMenuPopWindow.showAsDropDown(view,
-								view.getWidth() / 2, -view.getHeight() / 2);
-						focusPhotoListItem = position;
-						Log.w("photo", "点钟了" + focusPhotoListItem);
-
-					}
-				});
+		photoGridView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				downMenuPopWindow.showAsDropDown(view, view.getWidth() / 2, -view.getHeight() / 2);
+				System.out.println(view.getX());
+				focusPhotoListItem = position;
+				Log.w("viewgetWidth/2", "" + view.getWidth() / 2);
+				Log.w("-view.getHeight() / 2)", "" + -view.getHeight() / 2);
+				Log.w("photo", "点钟了" + focusPhotoListItem);
+			}
+		});
 
 		popWindow = new PopWindow(this);
 		downMenuPopWindow = popWindow.createDownMenu();
@@ -131,6 +131,7 @@ public class PhotoActivity extends Activity {
 				MediaStore.Images.Media.SIZE,
 				MediaStore.Images.Media.DATE_MODIFIED,
 				MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
+
 		protected Object doInBackground(Object... params) {
 			Bitmap bitmap = null;
 			Bitmap newBitmap = null;
@@ -196,7 +197,7 @@ public class PhotoActivity extends Activity {
 						info.bitmap = newBitmap;
 						photoList.add(info);
 
-						info.print();
+						//info.print();
 						bitmap.recycle();
 					}
 					publishProgress((int) (photoList.size() * 1.0 / length * 100.0));
@@ -211,6 +212,7 @@ public class PhotoActivity extends Activity {
 		}
 
 		protected void onProgressUpdate(Integer... values) {
+			Log.w("photoAdapter", "" + photoAdapter.getCount());
 			photoAdapter.notifyDataSetChanged();
 		}
 	}
