@@ -38,8 +38,9 @@ import android.widget.Toast;
 
 /**
  * 程序入口主界面 MainActivity
+ * 
  * @author 李伟
- *
+ * 
  */
 public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private TabSpec tabPhoto, tabAudio, tabVideo, tabBrowse, tabHistory;
@@ -54,6 +55,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	public static ProgressDialog createConnectionDialog;
 	public static boolean isCreateConnectionSuccess = false;
 	public static boolean isSearchedDevice = false;
+	public static String deviceAddress;
 
 	private Dialog dialog;
 	private long mLastBackTime = 0;
@@ -81,12 +83,15 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 						BluetoothTools.ACTION_SELECTED_DEVICE);
 				Log.w("点击位置position=", "" + position);
 				Log.w("连接设备名为：", "" + deviceAdapter.getItem(position).getName());
+				deviceAddress = deviceAdapter.getItem(position).getAddress();
+				System.out.println(deviceAddress);
 				selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
 						deviceAdapter.getItem(position));
 				sendBroadcast(selectDeviceIntent);
 			}
 		});
 	}
+
 
 	public void onStart() {
 		super.onStart();
@@ -109,7 +114,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 				return super.onKeyDown(keyCode, event);
 			} else {
 				mLastBackTime = now;
-				Toast.makeText(this, "再点一次将推出", 2000).show();
+				Toast.makeText(this, "再点一次将推出", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}

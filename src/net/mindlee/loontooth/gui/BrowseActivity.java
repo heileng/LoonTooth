@@ -22,9 +22,10 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 /**
- * 全部文件浏览器主界面
- * @author MindLee
- *
+ * 全部文件浏览 主界面
+ * 
+ * @author 李伟
+ * 
  */
 public class BrowseActivity extends Activity {
 	private List<String> items = null;
@@ -108,7 +109,6 @@ public class BrowseActivity extends Activity {
 				});
 	}
 
-	
 	private boolean isOperateItem(int position) {
 		if (items.get(position).toString().equals("rootPath")) {
 			return true;

@@ -12,10 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+
 /**
  * 客户端管理
+ * 
  * @author 李伟
- *
+ * 
  */
 public class Client {
 	private List<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
@@ -62,11 +64,10 @@ public class Client {
 				TransmitBean data = (TransmitBean) intent.getExtras()
 						.getSerializable(BluetoothTools.DATA);
 
-				String msg = "from remote " + new Date().toLocaleString()
-						+ " :\r\n" + data.getMsg() + "\r\n";
+				String msg = "请求发送 " + data.getMsg() + "\n大小：" + data.getSize();
 
-				Log.v("客户端", "接收到数据" + msg);
-				activity.DisplayToast("接收到数据" + msg);
+				Log.w("客户端", msg);
+				activity.DisplayToast(msg);
 			}
 		}
 	};

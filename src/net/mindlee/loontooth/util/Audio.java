@@ -16,8 +16,9 @@ import android.net.Uri;
 
 /**
  * 音频工具类，包括音乐播放，显示音乐属性等
+ * 
  * @author 李伟
- *
+ * 
  */
 public class Audio {
 	private Context context;
@@ -26,13 +27,14 @@ public class Audio {
 	public static final int OPEN = 1;
 	public static final int DETAILS = 2;
 
-	public Audio(Context context , List<AudioInfo> audioList) {
+	public Audio(Context context, List<AudioInfo> audioList) {
 		this.context = context;
 		this.audioList = audioList;
 	}
 
 	/**
 	 * 播放audioList中第position个音频（音乐）
+	 * 
 	 * @param position
 	 */
 	public void playMusic(int position) {
@@ -46,6 +48,7 @@ public class Audio {
 
 	/**
 	 * 弹出一个对话框，显示audioList中第position个音频的详细属性
+	 * 
 	 * @param position
 	 * @return 返回一个属性对话框
 	 */
@@ -68,8 +71,8 @@ public class Audio {
 		type = "\t格式：" + type.substring(type.indexOf('/') + 1, type.length());
 		String filePath = "\t位置：" + audioList.get(position).filePath;
 		filePath = filePath.substring(0, filePath.lastIndexOf('/')) + '\n';
-		String size = "\t大小："
-				+ Tools.sizeFormat(audioList.get(position).size) + "\n";
+		String size = "\t大小：" + Tools.sizeFormat(audioList.get(position).size)
+				+ "\n";
 		String date_modified = "\t修改日期："
 				+ Tools.secondsToDate(audioList.get(position).dateModified);
 		String str = "" + name + type + filePath + size + date_modified;

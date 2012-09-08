@@ -10,8 +10,9 @@ import net.mindlee.loontooth.R;
 
 /**
  * 下拉菜单的Adapter
+ * 
  * @author 李伟
- *
+ * 
  */
 public class DownMenuAdapter extends BaseAdapter {
 	private int[] icons = { R.drawable.downmenu_share,

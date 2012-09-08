@@ -10,6 +10,7 @@ import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.PopWindow;
+import net.mindlee.loontooth.util.Tools;
 import net.mindlee.loontooth.util.Video;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -32,8 +33,9 @@ import android.widget.Toast;
 
 /**
  * VideoActivity， 视频主界面
+ * 
  * @author 李伟
- *
+ * 
  */
 public class VideoActivity extends Activity {
 	private ListView videoListView;
@@ -94,8 +96,13 @@ public class VideoActivity extends Activity {
 	 */
 	private void sendVideoFiles(int position) {
 		TransmitBean data = new TransmitBean();
+
 		String title = videoList.get(position).title;
+
+		String size = videoList.get(position).size;
+		size = Tools.sizeFormat(size);
 		data.setMsg(title);
+		data.setSize(size);
 
 		String filePath = videoList.get(position).filePath;
 		String fileType = videoList.get(position).mimeType;
@@ -127,8 +134,9 @@ public class VideoActivity extends Activity {
 
 	/**
 	 * 异步加载SD卡中的视频文件
+	 * 
 	 * @author 李伟
-	 *
+	 * 
 	 */
 	class LoadVideoFromSDCard extends AsyncTask<Object, Integer, Object> {
 		private String[] mediaColumns = new String[] {
@@ -150,7 +158,6 @@ public class VideoActivity extends Activity {
 					info.filePath = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-
 					info.mimeType = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
@@ -166,18 +173,25 @@ public class VideoActivity extends Activity {
 					info.dateModified = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED));
+					Log.w("" + info.filePath, "" + info.size);
 
-					Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(
-							info.filePath, Thumbnails.MICRO_KIND);
-					int width = MainActivity.SCREEN_WIDTH / 4;
-					int height = width * 3 / 4;
-					Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(bitmap,
-							width, height);
-					info.bitmap = bitmap1;
-					bitmap.recycle();
+					// 邪恶的硬编码，问题仍未解决，bluetooth文件夹的内容不能彻底删除，留下一个没截图的诡异文件
+					if (info.filePath.indexOf("luetooth") == -1) {
+						Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(
+								info.filePath, Thumbnails.MICRO_KIND);
+						int width = MainActivity.SCREEN_WIDTH / 4;
+						int height = width * 3 / 4;
+						Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(
+								bitmap, width, height);
+						info.bitmap = bitmap1;
+						bitmap.recycle();
+					} else {
+						length--;
+					}
 					videoList.add(info);
 					publishProgress((int) (videoList.size() * 1.0 / length * 100.0));
 					Log.w("视频" + videoList.size(), "总共" + length);
+
 				} while (cursor.moveToNext());
 				cursor.close();
 			}

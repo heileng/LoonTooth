@@ -17,8 +17,9 @@ import android.widget.Toast;
 
 /**
  * 服务端，后台服务（service
+ * 
  * @author 李伟
- *
+ * 
  */
 public class ServerService extends Service {
 

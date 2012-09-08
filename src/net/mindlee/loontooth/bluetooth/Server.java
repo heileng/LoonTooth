@@ -8,10 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+
 /**
  * 服务器端管理
+ * 
  * @author 李伟
- *
+ * 
  */
 public class Server {
 	private MainActivity activity;
@@ -29,18 +31,17 @@ public class Server {
 				// 接收数据
 				TransmitBean data = (TransmitBean) intent.getExtras()
 						.getSerializable(BluetoothTools.DATA);
-				String msg = "from remote " + new Date().toLocaleString()
-						+ " :\r\n" + data.getMsg() + "\r\n";
-				Log.w("服务器收到信息", msg);
-				activity.DisplayToast("服务器收到消息" + msg);
+				String msg = "请求接受数据" + data.getMsg() + "\n大小：" + data.getSize();
+				Log.w( "服务器", msg);
+				activity.DisplayToast( msg);
 
 			} else if (BluetoothTools.ACTION_CONNECT_SUCCESS.equals(action)) {
 				// 连接成功
 				Log.w("服务器", "连接成功");
 				activity.DisplayToast("服务端连接成功");
-				
-				
-			}  else if (BluetoothTools.ACTION_CREATE_CONNECTION_SUCCESS.equals(action)) {
+
+			} else if (BluetoothTools.ACTION_CREATE_CONNECTION_SUCCESS
+					.equals(action)) {
 				Log.w("服务器", "服务器创建连接成功");
 				MainActivity.createConnectionDialog.dismiss();
 				MainActivity.isCreateConnectionSuccess = true;

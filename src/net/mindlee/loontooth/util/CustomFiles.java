@@ -3,7 +3,11 @@ package net.mindlee.loontooth.util;
 import java.io.File;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.bluetooth.BluetoothShare;
+import net.mindlee.loontooth.bluetooth.BluetoothTools;
+import net.mindlee.loontooth.gui.MainActivity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +15,9 @@ import android.net.Uri;
 
 public class CustomFiles {
 	private Context context;
+	public static final String VIDEO = "video";
+	public static final String AUDIO = "audio";
+	public static final String IMAGE = "image";
 
 	public CustomFiles(Context context) {
 		this.context = context;
@@ -18,7 +25,9 @@ public class CustomFiles {
 
 	/**
 	 * 打开一个包含详细信息的对话框
-	 * @param file 文件
+	 * 
+	 * @param file
+	 *            文件
 	 */
 	public void openDetailsDialog(File file) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -52,7 +61,9 @@ public class CustomFiles {
 
 	/**
 	 * 打开文件
-	 * @param f 文件
+	 * 
+	 * @param f
+	 *            文件
 	 */
 	public void openFile(File file) {
 		Intent intent = new Intent();
@@ -67,7 +78,9 @@ public class CustomFiles {
 
 	/**
 	 * 获取文件类型
-	 * @param f 文件
+	 * 
+	 * @param f
+	 *            文件
 	 * @return 文件类型
 	 */
 	public String getMIMEType(File f) {
@@ -80,12 +93,13 @@ public class CustomFiles {
 
 		if (end.equals("m4a") || end.equals("mp3") || end.equals("mid")
 				|| end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
-			type = "audio";
-		} else if (end.equals("3gp") || end.equals("mp4")) {
-			type = "video";
+			type = AUDIO;
+		} else if (end.equals("3gp") || end.equals("mp4") || end.equals("rmvb")
+				|| end.equals("mkv") || end.equals("avi") || end.equals("wmv")) {
+			type = VIDEO;
 		} else if (end.equals("jpg") || end.equals("gif") || end.equals("png")
 				|| end.equals("jpeg") || end.equals("bmp")) {
-			type = "image";
+			type = IMAGE;
 		} else {
 			type = "*";
 		}
@@ -96,11 +110,16 @@ public class CustomFiles {
 
 	/**
 	 * 调用系统的蓝牙页面，选择设备后，发送文件
-	 * @param filePath  文件路径
-	 * @param type		文件类型
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @param type
+	 *            文件类型
 	 */
 	public void sendFile(String filePath, String type) {
-		Intent intent = new Intent();
+	/*	
+	 * 调用系统发送页面
+	 * Intent intent = new Intent();
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setType(type);
@@ -108,6 +127,19 @@ public class CustomFiles {
 				"com.android.bluetooth.opp.BluetoothOppLauncherActivity");
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
 		context.startActivity(intent);
+		
+		*/
+		System.out.println(filePath);
+		System.out.println(MainActivity.deviceAddress);
+		System.out.println(Uri.fromFile(new File(filePath)).toString());
+		
+		ContentValues values = new ContentValues();
+		values.put(BluetoothShare.URI, Uri.fromFile(new File(filePath)).toString());
+		values.put(BluetoothShare.DESTINATION, MainActivity.deviceAddress);
+		values.put(BluetoothShare.DIRECTION, BluetoothShare.DIRECTION_OUTBOUND);
+		Long ts = System.currentTimeMillis();
+		values.put(BluetoothShare.TIMESTAMP, ts);
+		context.getContentResolver().insert(BluetoothShare.CONTENT_URI, values);
 	}
 
 }

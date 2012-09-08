@@ -12,6 +12,7 @@ import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.Photo;
 import net.mindlee.loontooth.util.PopWindow;
+import net.mindlee.loontooth.util.Tools;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -35,8 +36,9 @@ import android.widget.Toast;
 
 /**
  * PhotoActivity， 照片主界面
+ * 
  * @author 李伟
- *
+ * 
  */
 public class PhotoActivity extends Activity {
 	private GridView photoGridView;
@@ -88,12 +90,17 @@ public class PhotoActivity extends Activity {
 
 	/**
 	 * 发送photoList中的第position张照片
+	 * 
 	 * @param position
 	 */
 	private void sendPhotoFiles(int position) {
 		TransmitBean data = new TransmitBean();
 		String title = photoList.get(position).title;
+
+		String size = photoList.get(position).size;
+		size = Tools.sizeFormat(size);
 		data.setMsg(title);
+		data.setSize(size);
 
 		String filePath = photoList.get(position).filePath;
 		String fileType = photoList.get(position).mimeType;

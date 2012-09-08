@@ -12,8 +12,10 @@ import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.Audio;
 import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.PopWindow;
+import net.mindlee.loontooth.util.Tools;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -33,8 +35,9 @@ import android.widget.Toast;
 
 /**
  * 音频主界面
+ * 
  * @author 李伟
- *
+ * 
  */
 public class AudioActivity extends Activity {
 	private ListView audioListView;
@@ -90,12 +93,17 @@ public class AudioActivity extends Activity {
 
 	/**
 	 * 发送audioList中第position个音乐文件
-	 * @param position audioList位置
+	 * 
+	 * @param position
+	 *            audioList位置
 	 */
 	private void sendAudioFiles(int position) {
 		TransmitBean data = new TransmitBean();
 		String title = audioList.get(position).title;
+		String size = audioList.get(position).size;
+		size = Tools.sizeFormat(size);
 		data.setMsg(title);
+		data.setSize(size);
 
 		String filePath = audioList.get(position).filePath;
 		String fileType = audioList.get(position).mimeType;
@@ -106,6 +114,7 @@ public class AudioActivity extends Activity {
 		sendDataIntent.putExtra(BluetoothTools.DATA, data);
 		sendBroadcast(sendDataIntent);
 		downMenuPopWindow.dismiss();
+
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -124,8 +133,9 @@ public class AudioActivity extends Activity {
 
 	/**
 	 * 利用异步任务加载SD卡中的全部音乐文件
+	 * 
 	 * @author 李伟
-	 *
+	 * 
 	 */
 	class LoadAudioFromSDCard extends AsyncTask<Object, Integer, Object> {
 		private String[] audioColumns = new String[] {

@@ -10,8 +10,9 @@ import android.os.Handler;
 
 /**
  * 客户端的连接线程，用于配对
+ * 
  * @author 李伟
- *
+ * 
  */
 public class ClientConnectThread extends Thread {
 

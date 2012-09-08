@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 /**
  * 给AudioActivity中audioList的加载内容的Adapter
+ * 
  * @author 李伟
- *
+ * 
  */
 public class AudioAdapter extends BaseAdapter {
 	private AudioActivity context;

@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
 /**
  * 给PhotoActivity中photoList的加载内容的Adapter
+ * 
  * @author 李伟
- *
+ * 
  */
 public class PhotoAdapter extends BaseAdapter {
 	private Activity context;

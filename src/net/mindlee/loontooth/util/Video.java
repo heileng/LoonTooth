@@ -14,12 +14,13 @@ import android.net.Uri;
 
 /**
  * 视频工具类，视频文件用到的各种操作
+ * 
  * @author MindLee
- *
+ * 
  */
 public class Video {
 	private Context context;
-	private List<VideoInfo> videoList ;
+	private List<VideoInfo> videoList;
 
 	public Video(Context context, List<VideoInfo> videoList) {
 		this.context = context;
@@ -28,6 +29,7 @@ public class Video {
 
 	/**
 	 * 播放视频文件，播放videoList中的第position个视频
+	 * 
 	 * @param position
 	 */
 	public void playVideo(int position) {
@@ -41,6 +43,7 @@ public class Video {
 
 	/**
 	 * 弹出videoList中第position个视频的详细信息
+	 * 
 	 * @param position
 	 * @return 弹出一个属性对话框
 	 */
