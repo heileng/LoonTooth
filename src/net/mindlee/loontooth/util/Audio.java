@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.AudioAdapter;
 import net.mindlee.loontooth.adapter.AudioAdapter.AudioInfo;
 
 import android.app.AlertDialog;
@@ -15,20 +14,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 
+/**
+ * 音频工具类，包括音乐播放，显示音乐属性等
+ * @author 李伟
+ *
+ */
 public class Audio {
 	private Context context;
-	private AudioAdapter audioAdapter;
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
 	public static final int SAND = 0;
 	public static final int OPEN = 1;
 	public static final int DETAILS = 2;
 
-	public Audio(Context context , AudioAdapter audioAdapter) {
+	public Audio(Context context , List<AudioInfo> audioList) {
 		this.context = context;
-		this.audioAdapter = audioAdapter;
-		this.audioList = audioAdapter.getAudioList();
+		this.audioList = audioList;
 	}
 
+	/**
+	 * 播放audioList中第position个音频（音乐）
+	 * @param position
+	 */
 	public void playMusic(int position) {
 		String mediaUri = audioList.get(position).filePath;
 		String mediaType = audioList.get(position).mimeType;
@@ -38,6 +44,11 @@ public class Audio {
 		context.startActivity(intent);
 	}
 
+	/**
+	 * 弹出一个对话框，显示audioList中第position个音频的详细属性
+	 * @param position
+	 * @return 返回一个属性对话框
+	 */
 	public Dialog openDetailsDialog(int position) {
 		// 创建builder
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);

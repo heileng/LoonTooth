@@ -10,6 +10,11 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
+/**
+ * 弹出各种应用用到的PopupWindow
+ * @author 李伟
+ *
+ */
 public class PopWindow {
 	private ListView downMenuListView;
 	private PopupWindow downMenuPopWindow;
@@ -19,6 +24,10 @@ public class PopWindow {
 		this.context = context;
 	}
 
+	/**
+	 * 创建下拉菜单弹出窗口
+	 * @return	返回下拉菜单弹出窗口
+	 */
 	public PopupWindow createDownMenu() {
 		View downMenuLayout = View.inflate(context, R.layout.downmenu, null);
 		downMenuPopWindow = new PopupWindow(downMenuLayout,

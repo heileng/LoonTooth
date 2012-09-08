@@ -8,6 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import net.mindlee.loontooth.R;
 
+/**
+ * 用于更多（overflow）中弹出菜单的加载adapter
+ * @author 李伟
+ *
+ */
 public class MenuAdapter extends BaseAdapter{
 	private Context context;
 	private int[] menuImageArray = { R.drawable.menu_set, R.drawable.menu_help,

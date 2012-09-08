@@ -10,11 +10,10 @@ import net.mindlee.loontooth.adapter.AudioAdapter.AudioInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.Audio;
+import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.PopWindow;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -32,6 +31,11 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+/**
+ * 音频主界面
+ * @author 李伟
+ *
+ */
 public class AudioActivity extends Activity {
 	private ListView audioListView;
 	private static int focusAudioListViewItem;
@@ -39,6 +43,7 @@ public class AudioActivity extends Activity {
 	private AudioAdapter audioAdapter;
 	private Audio audio;
 	private PopWindow popWindow;
+	private CustomFiles customFiles = new CustomFiles(this);
 	private long mLastBackTime = 0;
 	private long TIME_DIFF = 2 * 1000;
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
@@ -50,9 +55,10 @@ public class AudioActivity extends Activity {
 
 		audioListView = (ListView) findViewById(R.id.audio_listView);
 		audioAdapter = new AudioAdapter(this, audioList);
-		audio = new Audio(this, audioAdapter);
+		audio = new Audio(this, audioList);
 		audioListView.setAdapter(audioAdapter);
 		new LoadAudioFromSDCard().execute();
+
 		audioListView
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
@@ -69,25 +75,12 @@ public class AudioActivity extends Activity {
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						Log.v("点击下拉菜单", "");
+						downMenuPopWindow.dismiss();
 						if (position == 0) {
-							Log.d("点击位置0", "传输");
-							// 发送消息
-							TransmitBean data = new TransmitBean();
-							String name = BluetoothTools.getBTAdapter()
-									.getName();
-							Log.w("name", "");
-							data.setMsg("你好");
-							Intent sendDataIntent = new Intent(
-									BluetoothTools.ACTION_DATA_TO_SERVICE);
-							sendDataIntent.putExtra(BluetoothTools.DATA, data);
-							sendBroadcast(sendDataIntent);
-							downMenuPopWindow.dismiss();
+							sendAudioFiles(focusAudioListViewItem);
 						} else if (position == 1) {
-							downMenuPopWindow.dismiss();
 							audio.playMusic(focusAudioListViewItem);
 						} else if (position == 2) {
-							downMenuPopWindow.dismiss();
 							audio.openDetailsDialog(focusAudioListViewItem)
 									.show();
 						}
@@ -95,9 +88,24 @@ public class AudioActivity extends Activity {
 				});
 	}
 
-	protected void onStart() {
-		Log.w("onStart", "");
-		super.onStart();
+	/**
+	 * 发送audioList中第position个音乐文件
+	 * @param position audioList位置
+	 */
+	private void sendAudioFiles(int position) {
+		TransmitBean data = new TransmitBean();
+		String title = audioList.get(position).title;
+		data.setMsg(title);
+
+		String filePath = audioList.get(position).filePath;
+		String fileType = audioList.get(position).mimeType;
+		customFiles.sendFile(filePath, fileType);
+
+		Intent sendDataIntent = new Intent(
+				BluetoothTools.ACTION_DATA_TO_SERVICE);
+		sendDataIntent.putExtra(BluetoothTools.DATA, data);
+		sendBroadcast(sendDataIntent);
+		downMenuPopWindow.dismiss();
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -107,13 +115,18 @@ public class AudioActivity extends Activity {
 				return super.onKeyDown(keyCode, event);
 			} else {
 				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/**
+	 * 利用异步任务加载SD卡中的全部音乐文件
+	 * @author 李伟
+	 *
+	 */
 	class LoadAudioFromSDCard extends AsyncTask<Object, Integer, Object> {
 		private String[] audioColumns = new String[] {
 				MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE,
@@ -123,23 +136,10 @@ public class AudioActivity extends Activity {
 				MediaStore.Audio.Media.IS_MUSIC,
 				MediaStore.Audio.Albums.ALBUM_ID, };
 
-		/*
-		 * ProgressDialog pdialog;
-		 * 
-		 * public LoadAudioFromSDCard(Context context) { pdialog = new
-		 * ProgressDialog(context, 0); pdialog.setButton("cancel", new
-		 * DialogInterface.OnClickListener() { public void
-		 * onClick(DialogInterface dialog, int i) { dialog.dismiss(); } });
-		 * pdialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-		 * public void onCancel(DialogInterface dialog) { finish(); } });
-		 * pdialog.setCancelable(true); pdialog.setMax(100);
-		 * pdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		 * pdialog.show();
-		 * 
-		 * }
-		 */
 		protected Object doInBackground(Object... params) {
-			Cursor cursor = managedQuery(
+
+			ContentResolver contentResolver = getContentResolver(); // 获取ContentResolver的引用
+			Cursor cursor = contentResolver.query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, audioColumns,
 					null, null, null);
 			int length = cursor.getCount();
@@ -206,7 +206,7 @@ public class AudioActivity extends Activity {
 					}
 					Log.w("已经" + audioList.size(), "总共" + length);
 					publishProgress((int) (audioList.size() * 1.0 / length * 100.0));
-				//	info.print();
+					// info.print();
 				}
 			}
 			cursor.close();
@@ -215,14 +215,6 @@ public class AudioActivity extends Activity {
 
 		protected void onProgressUpdate(Integer... values) {
 			audioAdapter.notifyDataSetChanged();
-			// pdialog.setProgress(values[0]);
-			
-			if (values[0] == 100) {
-				Toast.makeText(AudioActivity.this, "共" + audioAdapter.getCount() + "首歌.", Toast.LENGTH_SHORT);
-				Log.w("" + Toast.LENGTH_LONG, "" + Toast.LENGTH_SHORT);
-			}
-			// pdialog.dismiss();
-
 		}
 	}
 }

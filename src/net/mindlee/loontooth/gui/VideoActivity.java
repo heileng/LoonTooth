@@ -8,9 +8,11 @@ import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
+import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.PopWindow;
 import net.mindlee.loontooth.util.Video;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -28,6 +30,11 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+/**
+ * VideoActivity， 视频主界面
+ * @author 李伟
+ *
+ */
 public class VideoActivity extends Activity {
 	private ListView videoListView;
 	private int focusVideoListItem;
@@ -37,6 +44,7 @@ public class VideoActivity extends Activity {
 	private long mLastBackTime = 0;
 	private long TIME_DIFF = 2 * 1000;
 	private VideoAdapter videoAdapter;
+	private CustomFiles customFiles = new CustomFiles(this);
 
 	private ArrayList<VideoInfo> videoList = new ArrayList<VideoInfo>();
 
@@ -46,7 +54,7 @@ public class VideoActivity extends Activity {
 		setContentView(R.layout.activity_video);
 		videoListView = (ListView) findViewById(R.id.video_listView);
 		videoAdapter = new VideoAdapter(this, videoList);
-		video = new Video(this, videoAdapter);
+		video = new Video(this, videoList);
 		videoListView.setAdapter(videoAdapter);
 		new LoadVideoFromSDCard().execute();
 
@@ -67,32 +75,42 @@ public class VideoActivity extends Activity {
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						Log.v("点击下拉菜单", "");
+						downMenuPopWindow.dismiss();
 						if (position == 0) {
-							Log.d("点击位置0", "传输");
-							// 发送消息
-							TransmitBean data = new TransmitBean();
-							String name = BluetoothTools.getBTAdapter()
-									.getName();
-							Log.w("name", "");
-							data.setMsg("你好");
-							Intent sendDataIntent = new Intent(
-									BluetoothTools.ACTION_DATA_TO_SERVICE);
-							sendDataIntent.putExtra(BluetoothTools.DATA, data);
-							sendBroadcast(sendDataIntent);
-
+							sendVideoFiles(focusVideoListItem);
 						} else if (position == 1) {
-							downMenuPopWindow.dismiss();
 							video.playVideo(focusVideoListItem);
 						} else if (position == 2) {
-							downMenuPopWindow.dismiss();
 							video.openDetailsDialog(focusVideoListItem).show();
-							Log.d("点击位置3", "属性");
 						}
 					}
 				});
 	}
 
+	/**
+	 * 发送videoList中的第position个视频
+	 * 
+	 * @param position
+	 */
+	private void sendVideoFiles(int position) {
+		TransmitBean data = new TransmitBean();
+		String title = videoList.get(position).title;
+		data.setMsg(title);
+
+		String filePath = videoList.get(position).filePath;
+		String fileType = videoList.get(position).mimeType;
+		customFiles.sendFile(filePath, fileType);
+
+		Intent sendDataIntent = new Intent(
+				BluetoothTools.ACTION_DATA_TO_SERVICE);
+		sendDataIntent.putExtra(BluetoothTools.DATA, data);
+		sendBroadcast(sendDataIntent);
+		downMenuPopWindow.dismiss();
+	}
+
+	/**
+	 * 重载返回按键，再按一次退出
+	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			long now = new Date().getTime();
@@ -100,23 +118,30 @@ public class VideoActivity extends Activity {
 				return super.onKeyDown(keyCode, event);
 			} else {
 				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_LONG).show();
 			}
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/**
+	 * 异步加载SD卡中的视频文件
+	 * @author 李伟
+	 *
+	 */
 	class LoadVideoFromSDCard extends AsyncTask<Object, Integer, Object> {
 		private String[] mediaColumns = new String[] {
 				MediaStore.Video.Media.DATA, MediaStore.Video.Media._ID,
 				MediaStore.Video.Media.TITLE, MediaStore.Video.Media.DURATION,
 				MediaStore.Video.Media.SIZE, MediaStore.Video.Media.MIME_TYPE,
 				MediaStore.Video.Media.DATE_MODIFIED };
-		Cursor cursor = cursor = managedQuery(
+		ContentResolver contentResolver = getContentResolver(); // 获取ContentResolver的引用
+		Cursor cursor = contentResolver.query(
 				MediaStore.Video.Media.EXTERNAL_CONTENT_URI, mediaColumns,
 				null, null, null);
 		int length = cursor.getCount();
+
 		protected Object doInBackground(Object... params) {
 
 			if (cursor.moveToFirst()) {
@@ -125,10 +150,10 @@ public class VideoActivity extends Activity {
 					info.filePath = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+
 					info.mimeType = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
-					Log.w("视频格式", info.mimeType);
 					info.title = cursor
 							.getString(cursor
 									.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
@@ -154,17 +179,14 @@ public class VideoActivity extends Activity {
 					publishProgress((int) (videoList.size() * 1.0 / length * 100.0));
 					Log.w("视频" + videoList.size(), "总共" + length);
 				} while (cursor.moveToNext());
+				cursor.close();
 			}
-			cursor.close();
 			return null;
 		}
 
 		protected void onProgressUpdate(Integer... values) {
 			videoAdapter.notifyDataSetChanged();
 			Log.w("values[0]", "" + values[0]);
-			if (values[0] == 100) {
-				Toast.makeText(getApplicationContext(), "共" + videoAdapter.getCount() + "个视频.", Toast.LENGTH_SHORT);
-			}
 		}
 
 	}

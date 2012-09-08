@@ -1,72 +1,72 @@
 package net.mindlee.loontooth.bluetooth;
 
+import java.io.IOException;
 
 import net.mindlee.loontooth.util.Tools;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 /**
- * 服务器连接线程
- * @author GuoDong
- *
+ * 服务器连接线程，用于配对
+ * 
+ * @author 李伟
  */
 public class ServerConnectThread extends Thread {
-	
-	private Handler serviceHandler;		//用于同Service通信的Handler
-	private BluetoothAdapter adapter;
-	private BluetoothSocket socket;		//用于通信的Socket
-	private BluetoothServerSocket serverSocket;
-	
+
+	private Handler serverServiceHandler; // 用于同Service通信的Handler
+	private final BluetoothServerSocket serverSocket;
+
 	/**
 	 * 构造函数
+	 * 
 	 * @param handler
 	 */
 	public ServerConnectThread(Handler handler) {
-		this.serviceHandler = handler;
-		adapter = BluetoothAdapter.getDefaultAdapter();
-	}
-	
-	@Override
-	public void run() {
-		Tools.logThreadSignature("ServerConnectThread");
-		
+		this.serverServiceHandler = handler;
+        // Use a temporary object that is later assigned to mmServerSocket,
+        // because mmServerSocket is final
+		BluetoothServerSocket tmp = null;
 		try {
-			serverSocket = adapter.listenUsingRfcommWithServiceRecord("Server", BluetoothTools.PRIVATE_UUID);
-			socket = serverSocket.accept();
-			Log.w("Server   socket", "成功");
-		} catch (Exception e) {
-			//发送连接失败消息
-			serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
+			// MY_UUID is the app's UUID string, also used by the client code
+			tmp = BluetoothTools.getBTAdapter()
+					.listenUsingRfcommWithServiceRecord(BluetoothTools.SERVER,
+							BluetoothTools.MY_UUID);
+		} catch (IOException e) {
 			e.printStackTrace();
-			return;
-		} finally {
+		}
+		serverSocket = tmp;
+	}
+
+	public void run() {
+		Tools.logThreadSignature("服务端连接线程ServerConnectThread");
+		BluetoothSocket socket = null;
+		// Keep listening until exception occurs or a socket is returned
+		while (true) {
 			try {
-				serverSocket.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+				socket = serverSocket.accept();
+			} catch (IOException e) {
+				serverServiceHandler.obtainMessage(
+						BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
+				break;
+			}
+			// If a connection was accepted
+			if (socket != null) {
+				serverServiceHandler.obtainMessage(
+						BluetoothTools.MESSAGE_CONNECT_SUCCESS, socket)
+						.sendToTarget();
+				break;
 			}
 		}
-		
-		if (socket != null) {
-		//发送连接成功消息，消息的obj字段为连接的socket
-		Message msg = serviceHandler.obtainMessage();
-		msg.what = BluetoothTools.MESSAGE_CONNECT_SUCCESS;
-		msg.obj = socket;
-		msg.sendToTarget();
-		//和上边一句是等效的serviceHandler.sendMessage(msg);
-		} else {
-			//发送连接失败消息
-			serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
-			return;
+	}
+
+	/** Will cancel the listening socket, and cause the thread to finish */
+	public void cancel() {
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
 		}
 	}
-	
-	
+
 }
-
-

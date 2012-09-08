@@ -12,6 +12,11 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 	
+/**
+ * 用于蓝牙传输文件的  数据传输线程
+ * @author 李伟
+ *
+ */
 public class ConnectedThread extends Thread {
 
 	private Handler serviceHandler;		//与Service通信的Handler

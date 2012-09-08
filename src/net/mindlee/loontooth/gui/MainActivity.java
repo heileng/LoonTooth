@@ -31,11 +31,16 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
-import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
+/**
+ * 程序入口主界面 MainActivity
+ * @author 李伟
+ *
+ */
 public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private TabSpec tabPhoto, tabAudio, tabVideo, tabBrowse, tabHistory;
 	private TabHost tabHost;
@@ -46,6 +51,9 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	private Client client = new Client(this);
 	public static int SCREEN_WIDTH;
 	public static int SCREEN_HEIGHT;
+	public static ProgressDialog createConnectionDialog;
+	public static boolean isCreateConnectionSuccess = false;
+	public static boolean isSearchedDevice = false;
 
 	private Dialog dialog;
 	private long mLastBackTime = 0;
@@ -54,17 +62,14 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		dialog = new Dialog(this);
 
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		SCREEN_WIDTH = displaymetrics.widthPixels;
-		SCREEN_HEIGHT = displaymetrics.heightPixels;
-		Log.v("SCREEN_WIDTH", "" + SCREEN_WIDTH);
-		Log.v("SCREEN_HEIGHT", "" + SCREEN_HEIGHT);
+		getScreenWidthAndHeight();
+		dialog = new Dialog(this);
 		clientPopWindow = createClientPopWindow();
 		deviceAdapter = new DeviceAdapter(this);
 		deviceListView.setAdapter(deviceAdapter);
+		isCreateConnectionSuccess = false;
+		isSearchedDevice = false;
 
 		setTabHost();
 
@@ -94,6 +99,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		super.onDestroy();
 		server.onStop(this);
 		client.onStop(this);
+		Log.w("MainActivity", "onDestroy");
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -108,6 +114,20 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	public MainActivity getContext() {
+		return this;
+	}
+
+	private void getScreenWidthAndHeight() {
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		SCREEN_WIDTH = displaymetrics.widthPixels;
+		SCREEN_HEIGHT = displaymetrics.heightPixels;
+		Log.v("SCREEN_WIDTH", "" + SCREEN_WIDTH);
+		Log.v("SCREEN_HEIGHT", "" + SCREEN_HEIGHT);
+
 	}
 
 	public void onTabChanged(String tabId) {
@@ -130,11 +150,12 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 			startActivity(intent);
 		} else if (item.getItemId() == R.id.create_connection) {
 			Tools.logThreadSignature("MainActivity");
-			server.onStart(this);
-
-			if (BluetoothTools.getBTAdapter().isDiscovering()) {
-				Toast.makeText(getApplicationContext(), "创建连接成功，等待朋友加入。。",
-						Toast.LENGTH_SHORT);
+			if (!isCreateConnectionSuccess) {
+				server.onStart(this);
+				createConnectionDialog = ProgressDialog.show(this, "",
+						"正在创建连接中...", true);
+			} else {
+				DisplayToast("连接已创建成功。");
 			}
 		} else if (item.getItemId() == R.id.search_join) {
 			client.onStart(this);
@@ -150,7 +171,15 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		Log.w("onCreateOptionsMenu", "准备菜单");
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+
 		return true;
 	}
 
@@ -197,7 +226,7 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 	}
 
 	public void DisplayToast(String str) {
-		Toast.makeText(this, str, 100).show();
+		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
 	}
 
 	public PopupWindow createClientPopWindow() {

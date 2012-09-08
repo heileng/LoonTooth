@@ -21,6 +21,11 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * 客户端的后台服务, service
+ * @author MindLee
+ *
+ */
 public class ClientService extends Service {
 	private Context service = this;
 	//搜索到的远程设备集合
@@ -35,12 +40,12 @@ public class ClientService extends Service {
 	//控制信息广播的接收器
 	private BroadcastReceiver controlReceiver = new BroadcastReceiver() {
 		
-		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			
 			if (BluetoothTools.ACTION_START_DISCOVERY.equals(action)) {
 				//开始搜索
+				MainActivity.deviceAdapter.clearDevice();
 				discoveredDevices.clear();	//清空存放设备的集合
 				bluetoothAdapter.enable();	//打开蓝牙
 				bluetoothAdapter.startDiscovery();	//开始搜索
@@ -105,8 +110,6 @@ public class ClientService extends Service {
 	
 	//接收其他线程消息的Handler
 	Handler handler = new Handler() {
-
-		@Override
 		public void handleMessage(Message msg) {
 			//处理消息
 			switch (msg.what) {
@@ -122,12 +125,13 @@ public class ClientService extends Service {
 				//开启通讯线程
 				communThread = new ConnectedThread(handler, (BluetoothSocket)msg.obj);
 				communThread.start();
-				
+				Log.w("客户端连接成功", "ClientService");
 				//发送连接成功广播
 				Intent succIntent = new Intent(BluetoothTools.ACTION_CONNECT_SUCCESS);
 				sendBroadcast(succIntent);
 				break;
 			case BluetoothTools.MESSAGE_READ_OBJECT:
+				Log.w("客户端正在读取数据", "ClientService");
 				//读取到对象
 				//发送数据广播（包含数据对象）
 				Intent dataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_GAME);
@@ -150,7 +154,6 @@ public class ClientService extends Service {
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
-		
 		super.onStart(intent, startId);
 	}
 	

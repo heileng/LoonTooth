@@ -14,6 +14,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * 用于加载收件箱中ListView的Adapter
+ * @author MindLee
+ *
+ */
 public class InBoxAdapter extends BaseAdapter {
 
 	private Bitmap floderBackDir;
@@ -74,22 +79,24 @@ public class InBoxAdapter extends BaseAdapter {
 		if (items.get(position).toString().equals("parentDir")) {
 			holder.text.setText("返回上一层");
 			holder.icon.setImageBitmap(floderBackDir);
-		} else if (items.get(position).toString().equals("photoDir")) {
-			holder.text.setText("照片");
-			holder.icon.setImageBitmap(floderPhoto);
-		} else if (items.get(position).toString().equals("audioDir")) {
-			holder.text.setText("音乐");
-			holder.icon.setImageBitmap(floderAudio);
-		} else if (items.get(position).toString().equals("videoDir")) {
-			holder.text.setText("视频");
-			holder.icon.setImageBitmap(floderVideo);
-		} else if (items.get(position).toString().equals("otherDir")) {
-			holder.text.setText("其他");
-			holder.icon.setImageBitmap(floderOther);
-		} else {
-			holder.text.setText(f.getName());
 
-			holder.icon.setImageBitmap(floderDoc);
+		} else {			
+			if (f.getName().equals("Photo")) {
+				holder.text.setText("照片");
+				holder.icon.setImageBitmap(floderPhoto);
+			} else if (f.getName().equals("Music")) {
+				holder.text.setText("音乐");
+				holder.icon.setImageBitmap(floderAudio);
+			} else if (f.getName().equals("Video")) {
+				holder.text.setText("视频");
+				holder.icon.setImageBitmap(floderVideo);
+			} else if (f.getName().equals("Other")) {
+				holder.text.setText("其他");
+				holder.icon.setImageBitmap(floderOther);
+			} else {
+				holder.text.setText(f.getName());
+				holder.icon.setImageBitmap(floderDoc);
+			}
 		}
 		return convertView;
 	}

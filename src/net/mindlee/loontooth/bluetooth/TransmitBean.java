@@ -1,28 +1,25 @@
 package net.mindlee.loontooth.bluetooth;
 
-import java.io.File;
 import java.io.Serializable;
 
-import android.net.Uri;
+/**
+ * 用于传输消息的文件。
+ * @author 李伟
+ *
+ */
+public class TransmitBean implements Serializable {
 
-public class TransmitBean implements Serializable{
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3682384326613181880L;
 	private String msg = "";
-	private File data = null;
-	
+
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	
+
 	public String getMsg() {
 		return this.msg;
-	}
-	
-	public void setData(String uri) {
-		data = new File(uri);
-	}
-	
-	public File getData() {
-		return data;
 	}
 }

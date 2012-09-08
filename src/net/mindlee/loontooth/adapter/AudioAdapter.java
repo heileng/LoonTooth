@@ -7,17 +7,19 @@ import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.gui.AudioActivity;
 import net.mindlee.loontooth.gui.MainActivity;
 import net.mindlee.loontooth.util.Tools;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+/**
+ * 给AudioActivity中audioList的加载内容的Adapter
+ * @author 李伟
+ *
+ */
 public class AudioAdapter extends BaseAdapter {
 	private AudioActivity context;
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
@@ -65,6 +67,10 @@ public class AudioAdapter extends BaseAdapter {
 
 	public Object getItem(int p) {
 		return audioList.get(p);
+	}
+
+	public void clear() {
+		audioList.clear();
 	}
 
 	public long getItemId(int p) {

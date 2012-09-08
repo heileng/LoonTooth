@@ -11,6 +11,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * 给VideoActivity中videoList的加载内容的Adapter
+ * @author 李伟
+ *
+ */
 public class VideoAdapter extends BaseAdapter {
 	private Context context;
 	private ArrayList<VideoInfo> videoList = new ArrayList<VideoInfo>();

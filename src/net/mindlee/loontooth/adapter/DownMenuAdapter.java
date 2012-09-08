@@ -1,7 +1,6 @@
 package net.mindlee.loontooth.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,6 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import net.mindlee.loontooth.R;
 
+/**
+ * 下拉菜单的Adapter
+ * @author 李伟
+ *
+ */
 public class DownMenuAdapter extends BaseAdapter {
 	private int[] icons = { R.drawable.downmenu_share,
 			R.drawable.downmenu_open, R.drawable.downmenu_detail };

@@ -13,6 +13,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * 用于BrowseActivity中文件列表ListView中的Adapter
+ * @author 李伟
+ *
+ */
 public class AllFilesAdapter extends BaseAdapter {
    // private LayoutInflater mInflater;
     private Bitmap floderBackDir;

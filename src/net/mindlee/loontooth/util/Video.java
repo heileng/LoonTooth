@@ -1,11 +1,9 @@
 package net.mindlee.loontooth.util;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,17 +12,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 
+/**
+ * 视频工具类，视频文件用到的各种操作
+ * @author MindLee
+ *
+ */
 public class Video {
 	private Context context;
-	private VideoAdapter videoAdapter;
-	private List<VideoInfo> videoList = new ArrayList<VideoInfo>();
+	private List<VideoInfo> videoList ;
 
-	public Video(Context context, VideoAdapter videoAdapter) {
+	public Video(Context context, List<VideoInfo> videoList) {
 		this.context = context;
-		this.videoAdapter = videoAdapter;
-		this.videoList = videoAdapter.getVideoList();
+		this.videoList = videoList;
 	}
 
+	/**
+	 * 播放视频文件，播放videoList中的第position个视频
+	 * @param position
+	 */
 	public void playVideo(int position) {
 		String mediaUri = videoList.get(position).filePath;
 		String mediaType = videoList.get(position).mimeType;
@@ -34,6 +39,11 @@ public class Video {
 		context.startActivity(intent);
 	}
 
+	/**
+	 * 弹出videoList中第position个视频的详细信息
+	 * @param position
+	 * @return 弹出一个属性对话框
+	 */
 	public Dialog openDetailsDialog(int position) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("属性") // 标题

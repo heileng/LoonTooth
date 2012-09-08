@@ -9,6 +9,7 @@ import net.mindlee.loontooth.adapter.PhotoAdapter;
 import net.mindlee.loontooth.adapter.PhotoAdapter.PhotoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
+import net.mindlee.loontooth.util.CustomFiles;
 import net.mindlee.loontooth.util.Photo;
 import net.mindlee.loontooth.util.PopWindow;
 import android.app.Activity;
@@ -32,6 +33,11 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+/**
+ * PhotoActivity， 照片主界面
+ * @author 李伟
+ *
+ */
 public class PhotoActivity extends Activity {
 	private GridView photoGridView;
 	private int focusPhotoListItem;
@@ -42,6 +48,7 @@ public class PhotoActivity extends Activity {
 	private long mLastBackTime = 0;
 	private long TIME_DIFF = 2 * 1000;
 	private ArrayList<PhotoInfo> photoList = new ArrayList<PhotoInfo>();
+	private CustomFiles customFiles = new CustomFiles(this);
 
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -50,17 +57,14 @@ public class PhotoActivity extends Activity {
 		photoGridView = (GridView) findViewById(R.id.photoGridView);
 		photoAdapter = new PhotoAdapter(this, photoList);
 		photoGridView.setAdapter(photoAdapter);
-		photo = new Photo(this, photoAdapter);
+		photo = new Photo(this, photoList);
 		new LoadImagesFromSDCard().execute();
 		photoGridView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				downMenuPopWindow.showAsDropDown(view, view.getWidth() / 2, -view.getHeight() / 2);
-				System.out.println(view.getX());
+				downMenuPopWindow.showAsDropDown(view, view.getWidth() / 2,
+						-view.getHeight() / 2);
 				focusPhotoListItem = position;
-				Log.w("viewgetWidth/2", "" + view.getWidth() / 2);
-				Log.w("-view.getHeight() / 2)", "" + -view.getHeight() / 2);
-				Log.w("photo", "点钟了" + focusPhotoListItem);
 			}
 		});
 
@@ -70,28 +74,36 @@ public class PhotoActivity extends Activity {
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
+						downMenuPopWindow.dismiss();
 						if (position == 0) {
-							Log.d("点击位置0", "传输");
-							// 发送消息
-							TransmitBean data = new TransmitBean();
-							String name = BluetoothTools.getBTAdapter()
-									.getName();
-							Log.w("name", "");
-							data.setMsg("你好");
-							Intent sendDataIntent = new Intent(
-									BluetoothTools.ACTION_DATA_TO_SERVICE);
-							sendDataIntent.putExtra(BluetoothTools.DATA, data);
-							sendBroadcast(sendDataIntent);
-
+							sendPhotoFiles(focusPhotoListItem);
 						} else if (position == 1) {
-							downMenuPopWindow.dismiss();
 							photo.playPhoto(focusPhotoListItem);
 						} else if (position == 2) {
-							downMenuPopWindow.dismiss();
 							photo.openDetailsDialog(focusPhotoListItem).show();
 						}
 					}
 				});
+	}
+
+	/**
+	 * 发送photoList中的第position张照片
+	 * @param position
+	 */
+	private void sendPhotoFiles(int position) {
+		TransmitBean data = new TransmitBean();
+		String title = photoList.get(position).title;
+		data.setMsg(title);
+
+		String filePath = photoList.get(position).filePath;
+		String fileType = photoList.get(position).mimeType;
+		customFiles.sendFile(filePath, fileType);
+
+		Intent sendDataIntent = new Intent(
+				BluetoothTools.ACTION_DATA_TO_SERVICE);
+		sendDataIntent.putExtra(BluetoothTools.DATA, data);
+		sendBroadcast(sendDataIntent);
+		downMenuPopWindow.dismiss();
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -101,7 +113,7 @@ public class PhotoActivity extends Activity {
 				return super.onKeyDown(keyCode, event);
 			} else {
 				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", 2000).show();
+				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}
@@ -120,9 +132,9 @@ public class PhotoActivity extends Activity {
 	}
 
 	/**
-	 * Async task for loading the images from the SD card.
+	 * 异步任务(Asnc Task)加载SD卡中的照片文件
 	 * 
-	 * @author li wei
+	 * @author 李伟
 	 * 
 	 */
 	class LoadImagesFromSDCard extends AsyncTask<Object, Integer, Object> {
@@ -139,7 +151,7 @@ public class PhotoActivity extends Activity {
 			String[] projection = { MediaStore.Images.Thumbnails._ID,
 					MediaStore.Images.Thumbnails.IMAGE_ID };
 
-			Cursor thumbCursor = managedQuery(
+			Cursor thumbCursor = getContentResolver().query(
 					MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
 					projection, // Which columns to return
 					null, // Return all rows
@@ -157,8 +169,7 @@ public class PhotoActivity extends Activity {
 				String selection = MediaStore.Images.Media._ID + "=?";
 				String[] selectionArgs = new String[] { thumbCursor
 						.getInt(originalImageId) + "" };
-
-				Cursor photoCursor = managedQuery(
+				Cursor photoCursor = getContentResolver().query(
 						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 						imageColumns, selection, selectionArgs, null);
 				PhotoInfo info = new PhotoInfo();
@@ -179,9 +190,7 @@ public class PhotoActivity extends Activity {
 							.getString(photoCursor
 									.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED));
 				}
-
 				photoCursor.close();
-
 				int imageID = thumbCursor.getInt(columnIndex);
 				uri = Uri.withAppendedPath(
 						MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, ""
@@ -197,7 +206,7 @@ public class PhotoActivity extends Activity {
 						info.bitmap = newBitmap;
 						photoList.add(info);
 
-						//info.print();
+						// info.print();
 						bitmap.recycle();
 					}
 					publishProgress((int) (photoList.size() * 1.0 / length * 100.0));
@@ -208,6 +217,7 @@ public class PhotoActivity extends Activity {
 
 			}
 			thumbCursor.close();
+
 			return null;
 		}
 

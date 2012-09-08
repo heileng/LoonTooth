@@ -6,6 +6,11 @@ import java.util.UUID;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
+/**
+ *蓝牙工具类
+ * @author 李伟
+ *
+ */
 public class BluetoothTools {
 
 	private static BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -13,7 +18,12 @@ public class BluetoothTools {
 	/**
 	 * 本程序所使用的UUID
 	 */
-	public static final UUID PRIVATE_UUID = UUID.fromString("0f3561b9-bda5-4672-84ff-ab1f98e349b6");
+	public static final UUID MY_UUID = UUID.fromString("0f3561b9-bda5-4672-84ff-ab1f98e349b6");
+	
+	/**
+	 * 该服务的名字
+	 */
+	public static final String SERVER = "SERVER";
 	
 	/**
 	 * 字符串常量，存放在Intent中的设备对象
@@ -29,6 +39,11 @@ public class BluetoothTools {
 	 * 字符串常量，Intent中的数据
 	 */
 	public static final String DATA = "DATA";
+	
+	/**
+	 * 字符串常量，打开服务器成功
+	 */
+	public static final String ACTION_CREATE_CONNECTION_SUCCESS = "ACTION_CREATE_CONNECTION_SUCCESS";
 	
 	/**
 	 * Action类型标识符，Action类型 为读到数据

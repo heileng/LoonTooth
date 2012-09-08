@@ -15,16 +15,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
 
+/**
+ * 对话框工具类，用于弹出应用中用到的各种对话框
+ * @author 李伟
+ *
+ */
 public class Dialog {
 	private Context context;
 	private GridView menuGrid;
-	private MenuAdapter menuAdapter;
 
 	public Dialog(Context context) {
 		this.context = context;
-		menuAdapter = new MenuAdapter(context);
 	}
 
+	/**
+	 * 弹出"权限不足"对话款
+	 */
 	public void createNoAccessDialog() {
 		new AlertDialog.Builder(context).setTitle("Message")
 				.setMessage("权限不足!")
@@ -33,7 +39,10 @@ public class Dialog {
 					}
 				}).show();
 	}
-
+	
+	/**
+	 * 弹出菜单对话框
+	 */
 	public void createMenuDialog() {
 		View menuView = View.inflate(context, R.layout.menu_gridview, null);
 		// 创建AlertDialog
@@ -75,6 +84,9 @@ public class Dialog {
 		menuDialog.show();
 	}
 
+	/**
+	 * 弹出帮助对话框
+	 */
 	public void createHelpDialog() {
 		View helpView = View.inflate(context, R.layout.help_or_about, null);
 		AlertDialog helpDialog = new AlertDialog.Builder(context).create();
@@ -88,6 +100,9 @@ public class Dialog {
 		helpDialog.show();
 	}
 	
+	/**
+	 * 弹出关于对话框
+	 */
 	public void createAboutDialog() {
 		View helpView = View.inflate(context, R.layout.help_or_about, null);
 		AlertDialog helpDialog = new AlertDialog.Builder(context).create();

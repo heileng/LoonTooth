@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.bluetooth.Client;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.View;
@@ -13,12 +12,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//Adapter
+/**
+ * 用于显示搜索到的蓝牙设备ListView的Adapter
+ * @author MindLee
+ *
+ */
 public class DeviceAdapter extends BaseAdapter {
 	private Context context;
-	private Client client;
-	// private List<BluetoothDevice> deviceList = new
-	// ArrayList<BluetoothDevice>();
 	private List<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
 
 	public DeviceAdapter(Context context) {
@@ -31,6 +31,10 @@ public class DeviceAdapter extends BaseAdapter {
 
 	public void addDevice(BluetoothDevice device) {
 		deviceList.add(device);
+	}
+	
+	public void clearDevice() {
+		deviceList.clear();
 	}
 
 
