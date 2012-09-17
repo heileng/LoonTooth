@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.adapter.InBoxAdapter;
 import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
@@ -84,12 +85,18 @@ public class InBoxActivity extends BaseActivity {
 				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					public boolean onItemLongClick(AdapterView<?> parent,
 							View view, int position, long id) {
+						File file = new File(paths.get(position));
 						focusFilesItem = position;
-						if (isOperateItem(position)) {
-							getFileDir(paths.get(position));
+						if (file.canRead()) {
+							if (file.isDirectory()) {
+								getFileDir(paths.get(position));
+							} else {
+								downMenuPopWindow.showAsDropDown(view,
+										view.getWidth() / 2,
+										-view.getHeight() / 2);
+							}
 						} else {
-							downMenuPopWindow.showAsDropDown(view,
-									view.getWidth() / 2, -view.getHeight() / 2);
+							myDialog.createNoAccessDialog();
 						}
 						return true;
 					}
@@ -102,18 +109,21 @@ public class InBoxActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						File file = new File(paths.get(focusFilesItem));
-						if (position == 0) {
-							downMenuPopWindow.dismiss();
-						} else if (position == 1) {
-							downMenuPopWindow.dismiss();
+						downMenuPopWindow.dismiss();
+						if (position == DownMenuItem.TRANSFER.getIndex()) {
+
+						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(focusFilesItem));
 							} else {
 								myFiles.openFile(file);
 							}
-						} else if (position == 2) {
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+							file.delete();
+							inBoxAdapter.removeItem(focusFilesItem);
+							inBoxAdapter.notifyDataSetChanged();
+						} else if (position == DownMenuItem.DETAIL.getIndex()) {
 							myFiles.openDetailsDialog(file);
-							downMenuPopWindow.dismiss();
 						}
 					}
 				});
@@ -139,12 +149,13 @@ public class InBoxActivity extends BaseActivity {
 		File file = new File(bluetoothPath);
 		File[] files = file.listFiles();
 		for (File f : files) {
+
 			String type = myFiles.getMIMEType(f);
 			type = type.substring(0, type.length() - 2);
 			if (type.equals("audio")) {
 				moveFile(f.getPath(), audioPath);
 				f.delete();
-				
+
 			} else if (type.equals("video")) {
 				moveFile(f.getPath(), videoPath);
 				f.delete();
@@ -225,10 +236,18 @@ public class InBoxActivity extends BaseActivity {
 		File file = new File(sdCardPath);
 		File[] files = file.listFiles();
 		for (File f : files) {
+			Log.w("" + f.getName(), "" + f.getPath());
 			if (f.getName().toLowerCase().equals("bluetooth")) {
 				bluetoothPath = f.getPath();
 			}
 		}
+		if (bluetoothPath == null) {
+
+			bluetoothPath = sdCardPath + "/Bluetooth";
+			createFileDir(bluetoothPath);
+			System.out.println("没有蓝牙目录，新建后的是：" + bluetoothPath);
+		}
+
 		return bluetoothPath;
 	}
 
@@ -292,7 +311,7 @@ public class InBoxActivity extends BaseActivity {
 			publishProgress(20);
 			return null;
 		}
-		
+
 		protected void onProgressUpdate(Integer... values) {
 			inBoxAdapter.notifyDataSetChanged();
 		}

@@ -70,7 +70,8 @@ public class MyPopWindow {
 	 * 弹出，客户端搜索到的蓝牙设备，以类表形式显示
 	 */
 	public PopupWindow createDeviceSearchedPopWindow() {
-		View deviceLayout = View.inflate(context, R.layout.device_searched, null);
+		View deviceLayout = View.inflate(context, R.layout.device_searched,
+				null);
 		deviceSearchedListView = (ListView) deviceLayout
 				.findViewById(R.id.client_device_listView);
 		ImageButton closeButton = (ImageButton) deviceLayout

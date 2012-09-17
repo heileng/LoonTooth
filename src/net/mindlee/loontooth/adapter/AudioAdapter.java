@@ -59,7 +59,7 @@ public class AudioAdapter extends BaseAdapter {
 		this.audioList = audioList;
 		Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),
 				R.drawable.audio_default_background);
-		int width = LoonToothApplication.getScreenWidth()/ 5;
+		int width = LoonToothApplication.getScreenWidth() / 5;
 		audioBg = Bitmap.createScaledBitmap(bmp, width, width, true);
 	}
 
@@ -67,16 +67,20 @@ public class AudioAdapter extends BaseAdapter {
 		return audioList.size();
 	}
 
-	public Object getItem(int p) {
-		return audioList.get(p);
+	public Object getItem(int position) {
+		return audioList.get(position);
+	}
+
+	public void removeItem(int position) {
+		audioList.remove(position);
 	}
 
 	public void clear() {
 		audioList.clear();
 	}
 
-	public long getItemId(int p) {
-		return p;
+	public long getItemId(int position) {
+		return position;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {

@@ -1,11 +1,14 @@
 package net.mindlee.loontooth.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.AudioAdapter;
 import net.mindlee.loontooth.adapter.AudioAdapter.AudioInfo;
+import net.mindlee.loontooth.adapter.DownMenuAdapter;
+import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.MyAudio;
@@ -42,8 +45,9 @@ public class AudioActivity extends BaseActivity {
 	private MyAudio myAudio;
 	private MyPopWindow myPopWindow;
 	private MyFiles myFiles = new MyFiles(this);
-	
+
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
+
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
@@ -72,11 +76,20 @@ public class AudioActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						downMenuPopWindow.dismiss();
-						if (position == 0) {
+						if (position == DownMenuItem.TRANSFER.getIndex()) {
 							sendAudioFiles(focusAudioListViewItem);
-						} else if (position == 1) {
+						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							myAudio.playMusic(focusAudioListViewItem);
-						} else if (position == 2) {
+
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+							String filePath = audioList
+									.get(focusAudioListViewItem).filePath;
+							File f = new File(filePath);
+							f.delete();
+							audioAdapter.removeItem(focusAudioListViewItem);
+							audioAdapter.notifyDataSetChanged();
+
+						} else if (position == DownMenuItem.DETAIL.getIndex()) {
 							myAudio.openDetailsDialog(focusAudioListViewItem)
 									.show();
 						}

@@ -33,8 +33,7 @@ public class BrowseAdapter extends BaseAdapter {
 	private List<String> paths;
 	private MyFiles myFiles;
 
-	public BrowseAdapter(Context context, List<String> items,
-			List<String> paths) {
+	public BrowseAdapter(Context context, List<String> items, List<String> paths) {
 		this.context = context;
 		this.items = items;
 		this.paths = paths;
@@ -60,6 +59,11 @@ public class BrowseAdapter extends BaseAdapter {
 
 	public Object getItem(int position) {
 		return items.get(position);
+	}
+
+	public void removeItem(int position) {
+		items.remove(position);
+		paths.remove(position);
 	}
 
 	public long getItemId(int position) {

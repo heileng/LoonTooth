@@ -72,6 +72,11 @@ public class InBoxAdapter extends BaseAdapter {
 		return items.get(position);
 	}
 
+	public void removeItem(int position) {
+		items.remove(position);
+		paths.remove(position);
+	}
+
 	public long getItemId(int position) {
 		return position;
 	}

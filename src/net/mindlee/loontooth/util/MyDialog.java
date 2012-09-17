@@ -1,7 +1,10 @@
 package net.mindlee.loontooth.util;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.MenuAdapter;
+import net.mindlee.loontooth.adapter.PopMenuAdapter;
+import net.mindlee.loontooth.adapter.PopMenuAdapter.PopMenuItem;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +13,8 @@ import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
@@ -51,7 +56,7 @@ public class MyDialog {
 				.create();
 		menuDialog.setView(menuView);
 		menuGrid = (GridView) menuView.findViewById(R.id.gridview);
-		menuGrid.setAdapter(new MenuAdapter(context));
+		menuGrid.setAdapter(new PopMenuAdapter(context));
 		menuGrid.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				return MotionEvent.ACTION_MOVE == event.getAction() ? true
@@ -62,23 +67,35 @@ public class MyDialog {
 		menuGrid.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (position == 0) {
-
-				} else if (position == 1) {
+				/*
+				 * if (position == PopMenuItem.SETTING.getIndex()) {
+				 * 
+				 * } else
+				 */if (position == PopMenuItem.HELP.getIndex()) {
 					createHelpDialog();
-				} else if (position == 2) {
+				} else if (position == PopMenuItem.ABOUT.getIndex()) {
 					createAboutDialog();
-				} else if (position == 3) {
+				} else if (position == PopMenuItem.EMAIL.getIndex()) {
 					Intent intent = new Intent(Intent.ACTION_SENDTO);
 					intent.setData(Uri.parse("mailto:chinawelon@gmail.com"));
 					context.startActivity(intent);
-				} else if (position == 4) {
+				} else if (position == PopMenuItem.BLOG.getIndex()) {
 					Intent intent = new Intent(Intent.ACTION_VIEW);
 					intent.setData(Uri.parse("http://mindlee.net"));
 					context.startActivity(intent);
-				} else if (position == 5) {
-
 				}
+
+				/*
+				 * else if (position == PopMenuItem.RELAX.getIndex()) {
+				 * Animation shakeAnimY = AnimationUtils.loadAnimation(context,
+				 * R.anim.shake_y); Animation shakeAnimX =
+				 * AnimationUtils.loadAnimation(context, R.anim.shake_x);
+				 * 
+				 * menuGrid.startAnimation(shakeAnimX);
+				 * menuGrid.startAnimation(shakeAnimY);
+				 * 
+				 * }
+				 */
 			}
 		});
 

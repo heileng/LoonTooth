@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.BrowseAdapter;
+import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPopWindow;
@@ -35,6 +36,7 @@ public class BrowseActivity extends BaseActivity {
 	private MyDialog myDialog = new MyDialog(this);
 	private PopupWindow downMenuPopWindow;
 	private MyPopWindow myPopWindow;
+	private BrowseAdapter browseAdapter;
 
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -73,12 +75,18 @@ public class BrowseActivity extends BaseActivity {
 				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					public boolean onItemLongClick(AdapterView<?> parent,
 							View view, int position, long id) {
+						File file = new File(paths.get(position));
 						focusFilesItem = position;
-						if (isOperateItem(position)) {
-							getFileDir(paths.get(position));
+						if (file.canRead()) {
+							if (file.isDirectory()) {
+								getFileDir(paths.get(position));
+							} else {
+								downMenuPopWindow.showAsDropDown(view,
+										view.getWidth() / 2,
+										-view.getHeight() / 2);
+							}
 						} else {
-							downMenuPopWindow.showAsDropDown(view,
-									view.getWidth() / 2, -view.getHeight() / 2);
+							myDialog.createNoAccessDialog();
 						}
 						return true;
 					}
@@ -95,19 +103,22 @@ public class BrowseActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						File file = new File(paths.get(focusFilesItem));
+						downMenuPopWindow.dismiss();
+						if (position == DownMenuItem.TRANSFER.getIndex()) {
 
-						if (position == 0) {
-							downMenuPopWindow.dismiss();
-						} else if (position == 1) {
-							downMenuPopWindow.dismiss();
+						} else if (position == DownMenuItem.OPEN.getIndex()) {
+
 							if (file.isDirectory()) {
 								getFileDir(paths.get(focusFilesItem));
 							} else {
 								myFiles.openFile(file);
 							}
-						} else if (position == 2) {
+						} else if (position == DownMenuItem.DETAIL.getIndex()) {
 							myFiles.openDetailsDialog(file);
-							downMenuPopWindow.dismiss();
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+							file.delete();
+							browseAdapter.removeItem(focusFilesItem);
+							browseAdapter.notifyDataSetChanged();
 						}
 					}
 				});
@@ -115,6 +126,7 @@ public class BrowseActivity extends BaseActivity {
 
 	/**
 	 * 检测是不是非文件/文件夹项，内容是返回上一层和返回根目录这两项返回true
+	 * 
 	 * @return boolean
 	 */
 	private boolean isOperateItem(int position) {
@@ -150,7 +162,7 @@ public class BrowseActivity extends BaseActivity {
 			items.add(file.getName());
 			paths.add(file.getPath());
 		}
-
-		browseListView.setAdapter(new BrowseAdapter(this, items, paths));
+		browseAdapter = new BrowseAdapter(this, items, paths);
+		browseListView.setAdapter(browseAdapter);
 	}
 }

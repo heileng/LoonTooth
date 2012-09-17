@@ -7,7 +7,7 @@
     android:background="@drawable/menu_border"
     android:gravity="center"
     android:horizontalSpacing="10dip"
-    android:numColumns="3"
+    android:numColumns="2"
     android:padding="11dip"
     android:stretchMode="columnWidth"
     android:verticalSpacing="10dip" >

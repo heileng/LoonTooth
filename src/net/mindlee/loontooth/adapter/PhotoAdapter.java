@@ -62,6 +62,10 @@ public class PhotoAdapter extends BaseAdapter {
 		photoList.add(photo);
 	}
 
+	public void removeItem(int position) {
+		photoList.remove(position);
+	}
+
 	public Object getItem(int position) {
 		return photoList.get(position);
 	}

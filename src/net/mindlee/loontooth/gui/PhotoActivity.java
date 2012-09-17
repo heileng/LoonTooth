@@ -1,8 +1,10 @@
 package net.mindlee.loontooth.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.adapter.PhotoAdapter;
 import net.mindlee.loontooth.adapter.PhotoAdapter.PhotoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
@@ -44,12 +46,12 @@ public class PhotoActivity extends BaseActivity {
 	private PhotoAdapter photoAdapter;
 	private ArrayList<PhotoInfo> photoList = new ArrayList<PhotoInfo>();
 	private MyFiles myFiles = new MyFiles(this);
-	
+
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
-		
+
 		photoGridView = (GridView) findViewById(R.id.photoGridView);
 		photoAdapter = new PhotoAdapter(this, photoList);
 		photoGridView.setAdapter(photoAdapter);
@@ -64,23 +66,30 @@ public class PhotoActivity extends BaseActivity {
 			}
 		});
 
-	myPopWindow = new MyPopWindow(this);
+		myPopWindow = new MyPopWindow(this);
 		downMenuPopWindow = myPopWindow.createDownMenu();
 		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						downMenuPopWindow.dismiss();
-						if (position == 0) {
+						if (position == DownMenuItem.TRANSFER.getIndex()) {
 							sendPhotoFiles(focusPhotoListItem);
-						} else if (position == 1) {
+						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							myPhoto.playPhoto(focusPhotoListItem);
-						} else if (position == 2) {
-							myPhoto.openDetailsDialog(focusPhotoListItem).show();
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+							String filePath = photoList.get(focusPhotoListItem).filePath;
+							File f = new File(filePath);
+							f.delete();
+							photoAdapter.removeItem(focusPhotoListItem);
+							photoAdapter.notifyDataSetChanged();
+						} else if (position == DownMenuItem.DETAIL.getIndex()) {
+							myPhoto.openDetailsDialog(focusPhotoListItem)
+									.show();
 						}
 					}
 				});
-				
+
 	}
 
 	/**
@@ -187,7 +196,8 @@ public class PhotoActivity extends BaseActivity {
 					bitmap = BitmapFactory.decodeStream(getContentResolver()
 							.openInputStream(uri));
 					if (bitmap != null) {
-						assert LoonToothApplication.getScreenWidth() > 0 : LoonToothApplication.getScreenWidth();
+						assert LoonToothApplication.getScreenWidth() > 0 : LoonToothApplication
+								.getScreenWidth();
 						int width = LoonToothApplication.getScreenWidth() * 3 / 10;
 						int height = width * 3 / 4;
 						newBitmap = Bitmap.createScaledBitmap(bitmap, width,

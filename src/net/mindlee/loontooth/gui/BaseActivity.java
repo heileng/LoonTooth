@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 /**
  * 
- * 
+ * 基础类，用于定义一些所有Activity都用到的行为
  * @author 李伟
  * 
  */

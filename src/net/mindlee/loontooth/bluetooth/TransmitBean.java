@@ -10,9 +10,6 @@ import java.io.Serializable;
  */
 public class TransmitBean implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3682384326613181880L;
 	private String msg = "";
 	private String size = "";
@@ -24,11 +21,11 @@ public class TransmitBean implements Serializable {
 	public String getMsg() {
 		return this.msg;
 	}
-	
+
 	public void setSize(String size) {
 		this.size = size;
 	}
-	
+
 	public String getSize() {
 		return size;
 	}

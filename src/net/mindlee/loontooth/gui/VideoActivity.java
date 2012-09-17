@@ -1,8 +1,11 @@
 package net.mindlee.loontooth.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.adapter.DownMenuAdapter;
+import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
@@ -72,12 +75,19 @@ public class VideoActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						downMenuPopWindow.dismiss();
-						if (position == 0) {
+						if (position == DownMenuItem.TRANSFER.getIndex()) {
 							sendVideoFiles(focusVideoListItem);
-						} else if (position == 1) {
+						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							myVideo.playVideo(focusVideoListItem);
-						} else if (position == 2) {
-							myVideo.openDetailsDialog(focusVideoListItem).show();
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+							String filePath = videoList.get(focusVideoListItem).filePath;
+							File f = new File(filePath);
+							f.delete();
+							videoAdapter.removeItem(focusVideoListItem);
+							videoAdapter.notifyDataSetChanged();
+						} else if (position == DownMenuItem.DETAIL.getIndex()) {
+							myVideo.openDetailsDialog(focusVideoListItem)
+									.show();
 						}
 					}
 				});

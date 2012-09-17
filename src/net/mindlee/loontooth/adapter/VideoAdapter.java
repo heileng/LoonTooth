@@ -54,6 +54,10 @@ public class VideoAdapter extends BaseAdapter {
 		return videoList.get(p);
 	}
 
+	public void removeItem(int position) {
+		videoList.remove(position);
+	}
+
 	@Override
 	public long getItemId(int p) {
 		return p;
