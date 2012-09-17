@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
@@ -116,7 +117,11 @@ public class InBoxActivity extends BaseActivity {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(focusFilesItem));
 							} else {
-								myFiles.openFile(file);
+								if (myFiles.isFileWriting(file)) {
+									myDialog.createFileIsWritingDialog();
+								} else {
+									myFiles.openFile(file);
+								}
 							}
 						} else if (position == DownMenuItem.DELETE.getIndex()) {
 							file.delete();
@@ -152,10 +157,21 @@ public class InBoxActivity extends BaseActivity {
 
 			String type = myFiles.getMIMEType(f);
 			type = type.substring(0, type.length() - 2);
+
+			long now = System.currentTimeMillis();
+			Log.w("文件" + f.getName(), " 大小" + f.length());
+			Log.w("当前时间", "" + now);
+			Log.w("最后修改时间 ", "" + f.lastModified());
+
+			Log.w("相差", "" + (now - f.lastModified()));
+
+			if (now - f.lastModified() < 1000) {
+				continue;
+			}
+
 			if (type.equals("audio")) {
 				moveFile(f.getPath(), audioPath);
 				f.delete();
-
 			} else if (type.equals("video")) {
 				moveFile(f.getPath(), videoPath);
 				f.delete();
@@ -290,19 +306,6 @@ public class InBoxActivity extends BaseActivity {
 
 		inBoxAdapter = new InBoxAdapter(this, items, paths);
 		inBoxListView.setAdapter(inBoxAdapter);
-	}
-
-	/**
-	 * 判断listview中item是不是返回键，如果是，返回true；否则，返回false
-	 * 
-	 * @param position
-	 * @return
-	 */
-	private boolean isOperateItem(int position) {
-		if (items.get(position).toString().equals("parentDir")) {
-			return true;
-		}
-		return false;
 	}
 
 	class LoadInbox extends AsyncTask<Object, Integer, Object> {

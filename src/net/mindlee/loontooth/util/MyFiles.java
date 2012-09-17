@@ -43,8 +43,8 @@ public class MyFiles {
 		String filePath = "\t位置：" + file.getAbsolutePath() + "\n";
 		String size = null;
 		if (file.isFile()) {
-			size = "\t大小："
-					+ MyTools.sizeFormat(String.valueOf(file.length())) + "\n";
+			size = "\t大小：" + MyTools.sizeFormat(String.valueOf(file.length()))
+					+ "\n";
 		} else if (file.isDirectory()) {
 			type = "\t类型：" + "文件夹" + "\n";
 			size = "\t包含：" + getFloderInfo(file) + "\n";
@@ -108,14 +108,20 @@ public class MyFiles {
 		type += "/*";
 		return type;
 	}
-	
+
+	/**
+	 * 获取文件夹信息，获取文件夹内文件夹数和文件数
+	 * 
+	 * @param file
+	 * @return n个文件夹和m个文件
+	 */
 	public String getFloderInfo(File file) {
 		assert file.isDirectory() : file.isDirectory();
 		File[] filesArray = file.listFiles();
 		int fileCount = 0;
 		int floderCount = 0;
-		for (File f: filesArray) {
-			if(f.isFile()) {
+		for (File f : filesArray) {
+			if (f.isFile()) {
 				fileCount++;
 			} else if (f.isDirectory()) {
 				floderCount++;
@@ -123,7 +129,21 @@ public class MyFiles {
 		}
 		String res = floderCount + "个文件夹和" + fileCount + "个文件";
 		return res;
-		
+
+	}
+
+	/**
+	 * 根据修改时差，判断文件是否正在写入中
+	 * @param file
+	 * @return 如果是，返回true，否则false
+	 */
+	public boolean isFileWriting(File file) {
+		long now = System.currentTimeMillis();
+		long lastModified = file.lastModified();
+		if (now - lastModified < 3000) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

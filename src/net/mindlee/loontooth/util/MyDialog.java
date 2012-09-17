@@ -47,6 +47,18 @@ public class MyDialog {
 	}
 
 	/**
+	 * 弹出"权限不足"对话款
+	 */
+	public void createFileIsWritingDialog() {
+		new AlertDialog.Builder(context).setTitle("Message")
+				.setMessage("数据正在写入中，不能打开!")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).show();
+	}
+	
+	/**
 	 * 弹出菜单对话框
 	 */
 	public void createMenuDialog() {
