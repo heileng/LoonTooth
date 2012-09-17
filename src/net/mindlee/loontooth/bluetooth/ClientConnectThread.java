@@ -2,8 +2,7 @@ package net.mindlee.loontooth.bluetooth;
 
 import java.io.IOException;
 
-import net.mindlee.loontooth.util.Tools;
-
+import net.mindlee.loontooth.util.MyTools;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
@@ -44,7 +43,7 @@ public class ClientConnectThread extends Thread {
 	}
 
 	public void run() {
-		Tools.logThreadSignature("客户端连接线程ClientConnentThread");
+		MyTools.logThreadSignature("客户端连接线程ClientConnentThread");
 		// Cancel discovery because it will slow down the connection
 		BluetoothTools.getBTAdapter().cancelDiscovery();
 		try {

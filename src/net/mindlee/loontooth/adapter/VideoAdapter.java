@@ -2,7 +2,7 @@ package net.mindlee.loontooth.adapter;
 
 import java.util.ArrayList;
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.util.Tools;
+import net.mindlee.loontooth.util.MyTools;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
@@ -82,8 +82,8 @@ public class VideoAdapter extends BaseAdapter {
 		// 显示信息
 		holder.title.setText(videoList.get(position).title);
 		holder.duration
-				.setText(Tools.durationFormat(videoList.get(position).duration));
-		holder.size.setText(Tools.sizeFormat(videoList.get(position).size));
+				.setText(MyTools.durationFormat(videoList.get(position).duration));
+		holder.size.setText(MyTools.sizeFormat(videoList.get(position).size));
 		holder.thumb.setImageBitmap(videoList.get(position).getBitmap());
 		return convertView;
 	}

@@ -1,37 +1,25 @@
 package net.mindlee.loontooth.gui;
 
-import java.util.Date;
-
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.DeviceAdapter;
-import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.Client;
 import net.mindlee.loontooth.bluetooth.Server;
-import net.mindlee.loontooth.util.Dialog;
-import net.mindlee.loontooth.util.Tools;
+import net.mindlee.loontooth.util.MyDialog;
+import net.mindlee.loontooth.util.MyPopWindow;
+import net.mindlee.loontooth.util.MyTools;
 import android.app.ActionBar;
+import android.app.ActivityGroup;
 import android.app.ProgressDialog;
-import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,56 +30,68 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class MainActivity extends TabActivity implements OnTabChangeListener {
-	private TabSpec tabPhoto, tabAudio, tabVideo, tabBrowse, tabHistory;
-	private TabHost tabHost;
-	private PopupWindow clientPopWindow;
-	public static ListView deviceListView;
-	public static DeviceAdapter deviceAdapter;
+public class MainActivity extends ActivityGroup {
+	private PopupWindow deviceSearchedPopWindow;
 	private Server server = new Server(this);
 	private Client client = new Client(this);
-	public static int SCREEN_WIDTH;
-	public static int SCREEN_HEIGHT;
 	public static ProgressDialog createConnectionDialog;
 	public static boolean isCreateConnectionSuccess = false;
 	public static boolean isSearchedDevice = false;
-	public static String deviceAddress;
-
-	private Dialog dialog;
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
+	
+	private MyDialog myDialog;
+	private MyPopWindow myPopWindow;
+	private static String TAG = MainActivity.class.getName();
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		getScreenWidthAndHeight();
-		dialog = new Dialog(this);
-		clientPopWindow = createClientPopWindow();
-		deviceAdapter = new DeviceAdapter(this);
-		deviceListView.setAdapter(deviceAdapter);
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		int width = displaymetrics.widthPixels;
+		int height = displaymetrics.heightPixels;
+		Log.w(TAG, "onCreate");
+		LoonToothApplication.setScreenWidth(width);
+		LoonToothApplication.setScreenHeight(height);
+
+		myDialog = new MyDialog(this);
+		myPopWindow = new MyPopWindow(this);
+		
+		deviceSearchedPopWindow = myPopWindow.createDeviceSearchedPopWindow();
+		
 		isCreateConnectionSuccess = false;
 		isSearchedDevice = false;
 
-		setTabHost();
+		TabHost tabHost = (TabHost) this.findViewById(R.id.tabhost);
+		tabHost.setup();
+		tabHost.setup(getLocalActivityManager());
 
-		deviceListView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				clientPopWindow.dismiss();
-				Intent selectDeviceIntent = new Intent(
-						BluetoothTools.ACTION_SELECTED_DEVICE);
-				Log.w("点击位置position=", "" + position);
-				Log.w("连接设备名为：", "" + deviceAdapter.getItem(position).getName());
-				deviceAddress = deviceAdapter.getItem(position).getAddress();
-				System.out.println(deviceAddress);
-				selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
-						deviceAdapter.getItem(position));
-				sendBroadcast(selectDeviceIntent);
-			}
-		});
+		TabSpec tabPhoto = tabHost.newTabSpec("tab_photo");
+		tabPhoto.setIndicator(tabIndicator("照片", R.drawable.photo_selector));
+		tabPhoto.setContent(new Intent(this, PhotoActivity.class));
+		tabHost.addTab(tabPhoto);
+
+		TabSpec tabAudio = tabHost.newTabSpec("tab_audio");
+		tabAudio.setIndicator(tabIndicator("音乐", R.drawable.audio_selector));
+		tabAudio.setContent(new Intent(this, AudioActivity.class));
+		tabHost.addTab(tabAudio);
+
+		TabSpec tabVideo = tabHost.newTabSpec("tab_video");
+		tabVideo.setIndicator(tabIndicator("视频", R.drawable.video_selector));
+		tabVideo.setContent(new Intent(this, VideoActivity.class));
+		tabHost.addTab(tabVideo);
+
+		TabSpec tabBrowse = tabHost.newTabSpec("tab_browse");
+		tabBrowse.setIndicator(tabIndicator("文件", R.drawable.browse_selector));
+		tabBrowse.setContent(new Intent(this, BrowseActivity.class));
+		tabHost.addTab(tabBrowse);
+
+		TabSpec tabHistory = tabHost.newTabSpec("tab_inbox");
+		tabHistory.setIndicator(tabIndicator("收件箱", R.drawable.inbox_selector));
+		tabHistory.setContent(new Intent(this, InBoxActivity.class));
+		tabHost.addTab(tabHistory);
+
 	}
-
 
 	public void onStart() {
 		super.onStart();
@@ -107,54 +107,12 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		Log.w("MainActivity", "onDestroy");
 	}
 
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点一次将推出", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-	public MainActivity getContext() {
-		return this;
-	}
-
-	private void getScreenWidthAndHeight() {
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		SCREEN_WIDTH = displaymetrics.widthPixels;
-		SCREEN_HEIGHT = displaymetrics.heightPixels;
-		Log.v("SCREEN_WIDTH", "" + SCREEN_WIDTH);
-		Log.v("SCREEN_HEIGHT", "" + SCREEN_HEIGHT);
-
-	}
-
-	public void onTabChanged(String tabId) {
-		if (tabId.equals("tab_photo")) {
-			// DisplayToast("照片");
-		} else if (tabId.equals("tab_audio")) {
-			// DisplayToast("音乐");
-		} else if (tabId.equals("tab_video")) {
-			// / DisplayToast("视频");
-		} else if (tabId.equals("tab_browse")) {
-			// DisplayToast("文件");
-		} else if (tabId.equals("tab_inbox")) {
-			// DisplayToast("收件箱");
-		}
-	}
-
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			Intent intent = new Intent(MainActivity.this, MainActivity.class);
 			startActivity(intent);
 		} else if (item.getItemId() == R.id.create_connection) {
-			Tools.logThreadSignature("MainActivity");
+			MyTools.logThreadSignature("MainActivity");
 			if (!isCreateConnectionSuccess) {
 				server.onStart(this);
 				createConnectionDialog = ProgressDialog.show(this, "",
@@ -166,10 +124,10 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 			client.onStart(this);
 
 			View view = View.inflate(this, R.layout.activity_main, null);
-			clientPopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+			deviceSearchedPopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
 		} else if (item.getItemId() == R.id.overflow) {
-			dialog.createMenuDialog();
+			myDialog.createMenuDialog();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -179,46 +137,6 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 		Log.w("onCreateOptionsMenu", "准备菜单");
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-
-		return true;
-	}
-
-	private void setTabHost() {
-		tabHost = this.getTabHost();
-
-		tabPhoto = tabHost.newTabSpec("tab_photo");
-		tabPhoto.setIndicator(tabIndicator("照片", R.drawable.photo_selector));
-		tabPhoto.setContent(new Intent(this, PhotoActivity.class));
-		tabHost.addTab(tabPhoto);
-
-		tabAudio = tabHost.newTabSpec("tab_audio");
-		tabAudio.setIndicator(tabIndicator("音乐", R.drawable.audio_selector));
-		tabAudio.setContent(new Intent(this, AudioActivity.class));
-		tabHost.addTab(tabAudio);
-
-		tabVideo = tabHost.newTabSpec("tab_video");
-		tabVideo.setIndicator(tabIndicator("视频", R.drawable.video_selector));
-		tabVideo.setContent(new Intent(this, VideoActivity.class));
-		tabHost.addTab(tabVideo);
-
-		tabBrowse = tabHost.newTabSpec("tab_browse");
-		tabBrowse.setIndicator(tabIndicator("文件", R.drawable.browse_selector));
-		tabBrowse.setContent(new Intent(this, BrowseActivity.class));
-		tabHost.addTab(tabBrowse);
-
-		tabHistory = tabHost.newTabSpec("tab_inbox");
-		tabHistory.setIndicator(tabIndicator("收件箱", R.drawable.inbox_selector));
-		tabHistory.setContent(new Intent(this, InBoxActivity.class));
-		tabHost.addTab(tabHistory);
-
-		tabHost.setCurrentTab(0);// 启动时显示第一个标签页
-		tabHost.setOnTabChangedListener(this);
-
 	}
 
 	public View tabIndicator(String label, int drawableId) {
@@ -232,30 +150,5 @@ public class MainActivity extends TabActivity implements OnTabChangeListener {
 
 	public void DisplayToast(String str) {
 		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-	}
-
-	public PopupWindow createClientPopWindow() {
-		View deviceLayout = View.inflate(this, R.layout.client, null);
-		deviceListView = (ListView) deviceLayout
-				.findViewById(R.id.client_device_listView);
-		ImageButton closeButton = (ImageButton) deviceLayout
-				.findViewById(R.id.client_close_button);
-		ProgressBar progressBar = (ProgressBar) deviceLayout
-				.findViewById(R.id.client_search_device_progressBar);
-
-		clientPopWindow = new PopupWindow(deviceLayout,
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
-		clientPopWindow.setWidth(MainActivity.SCREEN_WIDTH * 3 / 4);
-		clientPopWindow.setHeight(MainActivity.SCREEN_HEIGHT * 3 / 5);
-		// clientPopWindow.setBackgroundDrawable(new ColorDrawable(0));
-
-		closeButton.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clientPopWindow.dismiss();
-			}
-		});
-
-		return clientPopWindow;
 	}
 }

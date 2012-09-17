@@ -1,4 +1,4 @@
 <?xml version= "1.0" encoding = "utf-8"?>
 <resources>
- <drawable name ="gray_rectangle">#717171</drawable>
+ <drawable name ="black_gray_rectangle">#282828</drawable>
 </resources>

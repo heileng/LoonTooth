@@ -9,21 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.InBoxAdapter;
-import net.mindlee.loontooth.gui.PhotoActivity.LoadImagesFromSDCard;
-import net.mindlee.loontooth.util.Dialog;
-import net.mindlee.loontooth.util.CustomFiles;
-import net.mindlee.loontooth.util.PopWindow;
-import android.app.Activity;
+import net.mindlee.loontooth.util.MyDialog;
+import net.mindlee.loontooth.util.MyFiles;
+import net.mindlee.loontooth.util.MyPopWindow;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -36,15 +32,15 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class InBoxActivity extends Activity {
+public class InBoxActivity extends BaseActivity {
 	private ListView inBoxListView;
-	private CustomFiles customFiles = new CustomFiles(this);
-	private Dialog dialog = new Dialog(this);
+	private MyFiles myFiles = new MyFiles(this);
+	private MyDialog myDialog = new MyDialog(this);
 	private List<String> items = null;
 	private List<String> paths = null;
 	private int focusFilesItem;
 	private PopupWindow downMenuPopWindow;
-	private PopWindow popWindow;
+	private MyPopWindow myPopWindow;
 	private InBoxAdapter inBoxAdapter;
 
 	public static String sdCardPath = Environment.getExternalStorageDirectory()
@@ -55,10 +51,8 @@ public class InBoxActivity extends Activity {
 	public static String videoPath = inBoxPath + "/Video";
 	public static String photoPath = inBoxPath + "/Photo";
 	public static String otherPath = inBoxPath + "/Other";
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
 
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
 		inBoxListView = (ListView) findViewById(R.id.inbox_listView);
@@ -81,7 +75,7 @@ public class InBoxActivity extends Activity {
 										-view.getHeight() / 2);
 							}
 						} else {
-							dialog.createNoAccessDialog();
+							myDialog.createNoAccessDialog();
 						}
 					}
 				});
@@ -101,9 +95,9 @@ public class InBoxActivity extends Activity {
 					}
 				});
 
-		popWindow = new PopWindow(this);
-		downMenuPopWindow = popWindow.createDownMenu();
-		popWindow.getDownMenuListView().setOnItemClickListener(
+		myPopWindow = new MyPopWindow(this);
+		downMenuPopWindow = myPopWindow.createDownMenu();
+		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -115,10 +109,10 @@ public class InBoxActivity extends Activity {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(focusFilesItem));
 							} else {
-								customFiles.openFile(file);
+								myFiles.openFile(file);
 							}
 						} else if (position == 2) {
-							customFiles.openDetailsDialog(file);
+							myFiles.openDetailsDialog(file);
 							downMenuPopWindow.dismiss();
 						}
 					}
@@ -145,7 +139,7 @@ public class InBoxActivity extends Activity {
 		File file = new File(bluetoothPath);
 		File[] files = file.listFiles();
 		for (File f : files) {
-			String type = customFiles.getMIMEType(f);
+			String type = myFiles.getMIMEType(f);
 			type = type.substring(0, type.length() - 2);
 			if (type.equals("audio")) {
 				moveFile(f.getPath(), audioPath);
@@ -290,20 +284,6 @@ public class InBoxActivity extends Activity {
 			return true;
 		}
 		return false;
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	class LoadInbox extends AsyncTask<Object, Integer, Object> {

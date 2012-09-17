@@ -1,18 +1,16 @@
 package net.mindlee.loontooth.gui;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
-import net.mindlee.loontooth.util.CustomFiles;
-import net.mindlee.loontooth.util.PopWindow;
-import net.mindlee.loontooth.util.Tools;
-import net.mindlee.loontooth.util.Video;
-import android.app.Activity;
+import net.mindlee.loontooth.util.MyFiles;
+import net.mindlee.loontooth.util.MyPopWindow;
+import net.mindlee.loontooth.util.MyVideo;
+import net.mindlee.loontooth.util.MyTools;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,13 +21,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.Thumbnails;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 /**
  * VideoActivity， 视频主界面
@@ -37,16 +33,14 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class VideoActivity extends Activity {
+public class VideoActivity extends BaseActivity {
 	private ListView videoListView;
 	private int focusVideoListItem;
 	private PopupWindow downMenuPopWindow;
-	private Video video;
-	private PopWindow popWindow;
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
+	private MyVideo myVideo;
+	private MyPopWindow myPopWindow;
 	private VideoAdapter videoAdapter;
-	private CustomFiles customFiles = new CustomFiles(this);
+	private MyFiles myFiles = new MyFiles(this);
 
 	private ArrayList<VideoInfo> videoList = new ArrayList<VideoInfo>();
 
@@ -56,7 +50,7 @@ public class VideoActivity extends Activity {
 		setContentView(R.layout.activity_video);
 		videoListView = (ListView) findViewById(R.id.video_listView);
 		videoAdapter = new VideoAdapter(this, videoList);
-		video = new Video(this, videoList);
+		myVideo = new MyVideo(this, videoList);
 		videoListView.setAdapter(videoAdapter);
 		new LoadVideoFromSDCard().execute();
 
@@ -70,10 +64,10 @@ public class VideoActivity extends Activity {
 					}
 				});
 
-		popWindow = new PopWindow(this);
-		downMenuPopWindow = popWindow.createDownMenu();
+		myPopWindow = new MyPopWindow(this);
+		downMenuPopWindow = myPopWindow.createDownMenu();
 
-		popWindow.getDownMenuListView().setOnItemClickListener(
+		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -81,9 +75,9 @@ public class VideoActivity extends Activity {
 						if (position == 0) {
 							sendVideoFiles(focusVideoListItem);
 						} else if (position == 1) {
-							video.playVideo(focusVideoListItem);
+							myVideo.playVideo(focusVideoListItem);
 						} else if (position == 2) {
-							video.openDetailsDialog(focusVideoListItem).show();
+							myVideo.openDetailsDialog(focusVideoListItem).show();
 						}
 					}
 				});
@@ -100,36 +94,19 @@ public class VideoActivity extends Activity {
 		String title = videoList.get(position).title;
 
 		String size = videoList.get(position).size;
-		size = Tools.sizeFormat(size);
+		size = MyTools.sizeFormat(size);
 		data.setMsg(title);
 		data.setSize(size);
 
 		String filePath = videoList.get(position).filePath;
 		String fileType = videoList.get(position).mimeType;
-		customFiles.sendFile(filePath, fileType);
+		myFiles.sendFile(filePath, fileType);
 
 		Intent sendDataIntent = new Intent(
 				BluetoothTools.ACTION_DATA_TO_SERVICE);
 		sendDataIntent.putExtra(BluetoothTools.DATA, data);
 		sendBroadcast(sendDataIntent);
 		downMenuPopWindow.dismiss();
-	}
-
-	/**
-	 * 重载返回按键，再按一次退出
-	 */
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_LONG).show();
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	/**
@@ -179,7 +156,7 @@ public class VideoActivity extends Activity {
 					if (info.filePath.indexOf("luetooth") == -1) {
 						Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(
 								info.filePath, Thumbnails.MICRO_KIND);
-						int width = MainActivity.SCREEN_WIDTH / 4;
+						int width = LoonToothApplication.getScreenWidth() / 4;
 						int height = width * 3 / 4;
 						Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(
 								bitmap, width, height);

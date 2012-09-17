@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import net.mindlee.loontooth.util.Tools;
+import net.mindlee.loontooth.util.MyTools;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
@@ -55,7 +55,7 @@ public class ConnectedThread extends Thread {
 
 	@Override
 	public void run() {
-		Tools.logThreadSignature("ConnectedThread");
+		MyTools.logThreadSignature("ConnectedThread");
 		while (true) {
 			if (!isRun) {
 				break;

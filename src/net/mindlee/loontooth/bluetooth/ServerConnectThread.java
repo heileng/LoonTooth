@@ -2,7 +2,7 @@ package net.mindlee.loontooth.bluetooth;
 
 import java.io.IOException;
 
-import net.mindlee.loontooth.util.Tools;
+import net.mindlee.loontooth.util.MyTools;
 
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -40,7 +40,7 @@ public class ServerConnectThread extends Thread {
 	}
 
 	public void run() {
-		Tools.logThreadSignature("服务端连接线程ServerConnectThread");
+		MyTools.logThreadSignature("服务端连接线程ServerConnectThread");
 		BluetoothSocket socket = null;
 		// Keep listening until exception occurs or a socket is returned
 		while (true) {

@@ -2,18 +2,15 @@ package net.mindlee.loontooth.gui;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.AllFilesAdapter;
-import net.mindlee.loontooth.util.Dialog;
-import net.mindlee.loontooth.util.CustomFiles;
-import net.mindlee.loontooth.util.PopWindow;
-import android.app.Activity;
+import net.mindlee.loontooth.adapter.BrowseAdapter;
+import net.mindlee.loontooth.util.MyDialog;
+import net.mindlee.loontooth.util.MyFiles;
+import net.mindlee.loontooth.util.MyPopWindow;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -27,28 +24,29 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class BrowseActivity extends Activity {
+public class BrowseActivity extends BaseActivity {
 	private List<String> items = null;
 	private List<String> paths = null;
 	private String rootPath = Environment.getExternalStorageDirectory()
 			.getPath();
-	private ListView allFilesListView;
+	private ListView browseListView;
 	private int focusFilesItem;
-	private CustomFiles customFiles = new CustomFiles(this);
-	private Dialog dialog = new Dialog(this);
+	private MyFiles myFiles = new MyFiles(this);
+	private MyDialog myDialog = new MyDialog(this);
 	private PopupWindow downMenuPopWindow;
-	private PopWindow popWindow;
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
+	private MyPopWindow myPopWindow;
 
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_browse);
-		allFilesListView = (ListView) findViewById(R.id.all_files_listView);
+		browseListView = (ListView) findViewById(R.id.browse_listView);
 		getFileDir(rootPath);
 
-		allFilesListView
+		/*
+		 * ListView点击事件
+		 */
+		browseListView
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -63,12 +61,15 @@ public class BrowseActivity extends Activity {
 										-view.getHeight() / 2);
 							}
 						} else {
-							dialog.createNoAccessDialog();
+							myDialog.createNoAccessDialog();
 						}
 					}
 				});
 
-		allFilesListView
+		/*
+		 * ListView长按事件
+		 */
+		browseListView
 				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					public boolean onItemLongClick(AdapterView<?> parent,
 							View view, int position, long id) {
@@ -84,9 +85,12 @@ public class BrowseActivity extends Activity {
 
 				});
 
-		popWindow = new PopWindow(this);
-		downMenuPopWindow = popWindow.createDownMenu();
-		popWindow.getDownMenuListView().setOnItemClickListener(
+		myPopWindow = new MyPopWindow(this);
+		downMenuPopWindow = myPopWindow.createDownMenu();
+		/*
+		 * 下拉菜单点击事件
+		 */
+		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -99,16 +103,20 @@ public class BrowseActivity extends Activity {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(focusFilesItem));
 							} else {
-								customFiles.openFile(file);
+								myFiles.openFile(file);
 							}
 						} else if (position == 2) {
-							customFiles.openDetailsDialog(file);
+							myFiles.openDetailsDialog(file);
 							downMenuPopWindow.dismiss();
 						}
 					}
 				});
 	}
 
+	/**
+	 * 检测是不是非文件/文件夹项，内容是返回上一层和返回根目录这两项返回true
+	 * @return boolean
+	 */
 	private boolean isOperateItem(int position) {
 		if (items.get(position).toString().equals("rootPath")) {
 			return true;
@@ -118,6 +126,9 @@ public class BrowseActivity extends Activity {
 		return false;
 	}
 
+	/**
+	 * ListView中添加搜索到的文件项
+	 */
 	private void getFileDir(String filePath) {
 		items = new ArrayList<String>();
 		paths = new ArrayList<String>();
@@ -140,21 +151,6 @@ public class BrowseActivity extends Activity {
 			paths.add(file.getPath());
 		}
 
-		allFilesListView.setAdapter(new AllFilesAdapter(this, items, paths));
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
-
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
+		browseListView.setAdapter(new BrowseAdapter(this, items, paths));
 	}
 }

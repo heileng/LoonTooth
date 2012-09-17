@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.net.Uri;
 
 /**
  * 蓝牙工具类

@@ -1,7 +1,6 @@
 package net.mindlee.loontooth.gui;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.R;
@@ -9,13 +8,11 @@ import net.mindlee.loontooth.adapter.AudioAdapter;
 import net.mindlee.loontooth.adapter.AudioAdapter.AudioInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
-import net.mindlee.loontooth.util.Audio;
-import net.mindlee.loontooth.util.CustomFiles;
-import net.mindlee.loontooth.util.PopWindow;
-import net.mindlee.loontooth.util.Tools;
-import android.app.Activity;
+import net.mindlee.loontooth.util.MyAudio;
+import net.mindlee.loontooth.util.MyFiles;
+import net.mindlee.loontooth.util.MyPopWindow;
+import net.mindlee.loontooth.util.MyTools;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -25,13 +22,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 /**
  * 音频主界面
@@ -39,26 +34,24 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class AudioActivity extends Activity {
+public class AudioActivity extends BaseActivity {
 	private ListView audioListView;
 	private static int focusAudioListViewItem;
 	private PopupWindow downMenuPopWindow;
 	private AudioAdapter audioAdapter;
-	private Audio audio;
-	private PopWindow popWindow;
-	private CustomFiles customFiles = new CustomFiles(this);
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
+	private MyAudio myAudio;
+	private MyPopWindow myPopWindow;
+	private MyFiles myFiles = new MyFiles(this);
+	
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
-
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_audio);
 
 		audioListView = (ListView) findViewById(R.id.audio_listView);
 		audioAdapter = new AudioAdapter(this, audioList);
-		audio = new Audio(this, audioList);
+		myAudio = new MyAudio(this, audioList);
 		audioListView.setAdapter(audioAdapter);
 		new LoadAudioFromSDCard().execute();
 
@@ -72,9 +65,9 @@ public class AudioActivity extends Activity {
 					}
 				});
 
-		popWindow = new PopWindow(this);
-		downMenuPopWindow = popWindow.createDownMenu();
-		popWindow.getDownMenuListView().setOnItemClickListener(
+		myPopWindow = new MyPopWindow(this);
+		downMenuPopWindow = myPopWindow.createDownMenu();
+		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -82,9 +75,9 @@ public class AudioActivity extends Activity {
 						if (position == 0) {
 							sendAudioFiles(focusAudioListViewItem);
 						} else if (position == 1) {
-							audio.playMusic(focusAudioListViewItem);
+							myAudio.playMusic(focusAudioListViewItem);
 						} else if (position == 2) {
-							audio.openDetailsDialog(focusAudioListViewItem)
+							myAudio.openDetailsDialog(focusAudioListViewItem)
 									.show();
 						}
 					}
@@ -101,13 +94,13 @@ public class AudioActivity extends Activity {
 		TransmitBean data = new TransmitBean();
 		String title = audioList.get(position).title;
 		String size = audioList.get(position).size;
-		size = Tools.sizeFormat(size);
+		size = MyTools.sizeFormat(size);
 		data.setMsg(title);
 		data.setSize(size);
 
 		String filePath = audioList.get(position).filePath;
 		String fileType = audioList.get(position).mimeType;
-		customFiles.sendFile(filePath, fileType);
+		myFiles.sendFile(filePath, fileType);
 
 		Intent sendDataIntent = new Intent(
 				BluetoothTools.ACTION_DATA_TO_SERVICE);
@@ -115,20 +108,6 @@ public class AudioActivity extends Activity {
 		sendBroadcast(sendDataIntent);
 		downMenuPopWindow.dismiss();
 
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	/**
@@ -194,7 +173,7 @@ public class AudioActivity extends Activity {
 						byte[] art = retriever.getEmbeddedPicture();
 						bitmap = BitmapFactory.decodeByteArray(art, 0,
 								art.length);
-						int width = MainActivity.SCREEN_WIDTH / 5;
+						int width = LoonToothApplication.getScreenWidth() / 5;
 						Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap,
 								width, width, true);
 						bitmap.recycle();

@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mindlee.loontooth.gui.MainActivity;
-
+import net.mindlee.loontooth.util.MyPopWindow;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -30,7 +29,6 @@ public class ClientService extends Service {
 	private Context service = this;
 	// 搜索到的远程设备集合
 	private List<BluetoothDevice> discoveredDevices = new ArrayList<BluetoothDevice>();
-
 	// 蓝牙适配器
 	private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter
 			.getDefaultAdapter();
@@ -46,7 +44,7 @@ public class ClientService extends Service {
 
 			if (BluetoothTools.ACTION_START_DISCOVERY.equals(action)) {
 				// 开始搜索
-				MainActivity.deviceAdapter.clearDevice();
+				MyPopWindow.getDeviceSearchAdapter().clearDevice();
 				discoveredDevices.clear(); // 清空存放设备的集合
 				bluetoothAdapter.enable(); // 打开蓝牙
 				bluetoothAdapter.startDiscovery(); // 开始搜索

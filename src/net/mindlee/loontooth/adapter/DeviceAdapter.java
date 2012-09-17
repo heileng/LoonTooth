@@ -51,7 +51,7 @@ public class DeviceAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder = null;
 		holder = new ViewHolder();
-		convertView = View.inflate(context, R.layout.client_device_item, null);
+		convertView = View.inflate(context, R.layout.device_searched_item, null);
 		holder.avatar = (ImageView) convertView
 				.findViewById(R.id.device_avatar);
 		holder.deviceName = (TextView) convertView

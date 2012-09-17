@@ -2,18 +2,15 @@ package net.mindlee.loontooth.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.PhotoAdapter;
 import net.mindlee.loontooth.adapter.PhotoAdapter.PhotoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
-import net.mindlee.loontooth.util.CustomFiles;
-import net.mindlee.loontooth.util.Photo;
-import net.mindlee.loontooth.util.PopWindow;
-import net.mindlee.loontooth.util.Tools;
-import android.app.Activity;
+import net.mindlee.loontooth.util.MyFiles;
+import net.mindlee.loontooth.util.MyPhoto;
+import net.mindlee.loontooth.util.MyPopWindow;
+import net.mindlee.loontooth.util.MyTools;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,7 +21,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -32,7 +28,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 /**
  * PhotoActivity， 照片主界面
@@ -40,26 +35,25 @@ import android.widget.Toast;
  * @author 李伟
  * 
  */
-public class PhotoActivity extends Activity {
+public class PhotoActivity extends BaseActivity {
 	private GridView photoGridView;
 	private int focusPhotoListItem;
 	private PopupWindow downMenuPopWindow;
-	private Photo photo;
-	private PopWindow popWindow;
+	private MyPhoto myPhoto;
+	private MyPopWindow myPopWindow;
 	private PhotoAdapter photoAdapter;
-	private long mLastBackTime = 0;
-	private long TIME_DIFF = 2 * 1000;
 	private ArrayList<PhotoInfo> photoList = new ArrayList<PhotoInfo>();
-	private CustomFiles customFiles = new CustomFiles(this);
-
+	private MyFiles myFiles = new MyFiles(this);
+	
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
+		
 		photoGridView = (GridView) findViewById(R.id.photoGridView);
 		photoAdapter = new PhotoAdapter(this, photoList);
 		photoGridView.setAdapter(photoAdapter);
-		photo = new Photo(this, photoList);
+		myPhoto = new MyPhoto(this, photoList);
 		new LoadImagesFromSDCard().execute();
 		photoGridView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -70,9 +64,9 @@ public class PhotoActivity extends Activity {
 			}
 		});
 
-		popWindow = new PopWindow(this);
-		downMenuPopWindow = popWindow.createDownMenu();
-		popWindow.getDownMenuListView().setOnItemClickListener(
+	myPopWindow = new MyPopWindow(this);
+		downMenuPopWindow = myPopWindow.createDownMenu();
+		myPopWindow.getDownMenuListView().setOnItemClickListener(
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
@@ -80,12 +74,13 @@ public class PhotoActivity extends Activity {
 						if (position == 0) {
 							sendPhotoFiles(focusPhotoListItem);
 						} else if (position == 1) {
-							photo.playPhoto(focusPhotoListItem);
+							myPhoto.playPhoto(focusPhotoListItem);
 						} else if (position == 2) {
-							photo.openDetailsDialog(focusPhotoListItem).show();
+							myPhoto.openDetailsDialog(focusPhotoListItem).show();
 						}
 					}
 				});
+				
 	}
 
 	/**
@@ -98,33 +93,19 @@ public class PhotoActivity extends Activity {
 		String title = photoList.get(position).title;
 
 		String size = photoList.get(position).size;
-		size = Tools.sizeFormat(size);
+		size = MyTools.sizeFormat(size);
 		data.setMsg(title);
 		data.setSize(size);
 
 		String filePath = photoList.get(position).filePath;
 		String fileType = photoList.get(position).mimeType;
-		customFiles.sendFile(filePath, fileType);
+		myFiles.sendFile(filePath, fileType);
 
 		Intent sendDataIntent = new Intent(
 				BluetoothTools.ACTION_DATA_TO_SERVICE);
 		sendDataIntent.putExtra(BluetoothTools.DATA, data);
 		sendBroadcast(sendDataIntent);
 		downMenuPopWindow.dismiss();
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long now = new Date().getTime();
-			if (now - mLastBackTime < TIME_DIFF) {
-				return super.onKeyDown(keyCode, event);
-			} else {
-				mLastBackTime = now;
-				Toast.makeText(this, "再点击一次退出程序", Toast.LENGTH_SHORT).show();
-			}
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	protected void onDestroy() {
@@ -206,7 +187,8 @@ public class PhotoActivity extends Activity {
 					bitmap = BitmapFactory.decodeStream(getContentResolver()
 							.openInputStream(uri));
 					if (bitmap != null) {
-						int width = MainActivity.SCREEN_WIDTH * 3 / 10;
+						assert LoonToothApplication.getScreenWidth() > 0 : LoonToothApplication.getScreenWidth();
+						int width = LoonToothApplication.getScreenWidth() * 3 / 10;
 						int height = width * 3 / 4;
 						newBitmap = Bitmap.createScaledBitmap(bitmap, width,
 								height, true);

@@ -1,7 +1,5 @@
 package net.mindlee.loontooth.bluetooth;
 
-import java.util.Date;
-
 import net.mindlee.loontooth.gui.MainActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;

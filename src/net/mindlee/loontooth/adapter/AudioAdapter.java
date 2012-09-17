@@ -5,8 +5,8 @@ import java.util.List;
 
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.gui.AudioActivity;
-import net.mindlee.loontooth.gui.MainActivity;
-import net.mindlee.loontooth.util.Tools;
+import net.mindlee.loontooth.gui.LoonToothApplication;
+import net.mindlee.loontooth.util.MyTools;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -59,7 +59,7 @@ public class AudioAdapter extends BaseAdapter {
 		this.audioList = audioList;
 		Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),
 				R.drawable.audio_default_background);
-		int width = MainActivity.SCREEN_WIDTH / 5;
+		int width = LoonToothApplication.getScreenWidth()/ 5;
 		audioBg = Bitmap.createScaledBitmap(bmp, width, width, true);
 	}
 
@@ -102,7 +102,7 @@ public class AudioAdapter extends BaseAdapter {
 			}
 
 			holder.title.setText(audioList.get(position).title);
-			String str = Tools.sizeFormat(audioList.get(position).size);
+			String str = MyTools.sizeFormat(audioList.get(position).size);
 			holder.size.setText(str);
 			holder.artist.setText(audioList.get(position).artist);
 			if (audioList.get(position).bitmap != null) {

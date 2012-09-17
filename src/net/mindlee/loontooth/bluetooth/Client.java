@@ -1,11 +1,10 @@
 package net.mindlee.loontooth.bluetooth;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.mindlee.loontooth.gui.MainActivity;
-
+import net.mindlee.loontooth.util.MyPopWindow;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,8 +46,8 @@ public class Client {
 				BluetoothDevice device = (BluetoothDevice) intent.getExtras()
 						.get(BluetoothTools.DEVICE);
 				deviceList.add(device);
-				MainActivity.deviceAdapter.addDevice(device);
-				MainActivity.deviceAdapter.notifyDataSetChanged();
+				MyPopWindow.getDeviceSearchAdapter().addDevice(device);
+				MyPopWindow.getDeviceSearchAdapter().notifyDataSetChanged();
 
 				Log.v("客户端", "发现设备" + device.getName());
 				activity.DisplayToast("发现设备" + device.getName());
