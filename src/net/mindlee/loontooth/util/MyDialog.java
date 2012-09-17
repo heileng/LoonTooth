@@ -3,8 +3,6 @@ package net.mindlee.loontooth.util;
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.PopMenuAdapter;
 import net.mindlee.loontooth.adapter.PopMenuAdapter.PopMenuItem;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,8 +11,6 @@ import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
@@ -47,7 +43,7 @@ public class MyDialog {
 	}
 
 	/**
-	 * 弹出"权限不足"对话款
+	 * 弹出对话框：数据正在写入，不能打开
 	 */
 	public void createFileIsWritingDialog() {
 		new AlertDialog.Builder(context).setTitle("Message")

@@ -125,20 +125,6 @@ public class BrowseActivity extends BaseActivity {
 	}
 
 	/**
-	 * 检测是不是非文件/文件夹项，内容是返回上一层和返回根目录这两项返回true
-	 * 
-	 * @return boolean
-	 */
-	private boolean isOperateItem(int position) {
-		if (items.get(position).toString().equals("rootPath")) {
-			return true;
-		} else if (items.get(position).toString().equals("parentDir")) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * ListView中添加搜索到的文件项
 	 */
 	private void getFileDir(String filePath) {

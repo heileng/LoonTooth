@@ -1,10 +1,13 @@
 package net.mindlee.loontooth.adapter;
 
 import java.util.ArrayList;
+
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.gui.LoonToothApplication;
 import net.mindlee.loontooth.util.MyTools;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 public class VideoAdapter extends BaseAdapter {
 	private Context context;
 	private ArrayList<VideoInfo> videoList = new ArrayList<VideoInfo>();
+	private Bitmap videoBg;
 
 	public static class VideoInfo {
 		public String filePath;
@@ -42,6 +46,11 @@ public class VideoAdapter extends BaseAdapter {
 	public VideoAdapter(Context context, ArrayList<VideoInfo> videoList) {
 		this.context = context;
 		this.videoList = videoList;
+		Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),
+				R.drawable.video_default_background);
+		int width = LoonToothApplication.getScreenWidth() / 4;
+		int height = width * 3 / 4;
+		videoBg = Bitmap.createScaledBitmap(bmp, width, height, true);
 	}
 
 	@Override
@@ -88,7 +97,11 @@ public class VideoAdapter extends BaseAdapter {
 		holder.duration
 				.setText(MyTools.durationFormat(videoList.get(position).duration));
 		holder.size.setText(MyTools.sizeFormat(videoList.get(position).size));
-		holder.thumb.setImageBitmap(videoList.get(position).getBitmap());
+		if (videoList.get(position).bitmap != null) {
+			holder.thumb.setImageBitmap(videoList.get(position).getBitmap());
+		} else {
+			holder.thumb.setImageBitmap(videoBg);
+		}
 		return convertView;
 	}
 

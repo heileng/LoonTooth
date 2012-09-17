@@ -7,7 +7,6 @@ import java.util.List;
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.AudioAdapter;
 import net.mindlee.loontooth.adapter.AudioAdapter.AudioInfo;
-import net.mindlee.loontooth.adapter.DownMenuAdapter;
 import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;

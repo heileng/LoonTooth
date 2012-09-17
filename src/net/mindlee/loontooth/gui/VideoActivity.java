@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import net.mindlee.loontooth.R;
-import net.mindlee.loontooth.adapter.DownMenuAdapter;
 import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
@@ -12,8 +11,8 @@ import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPopWindow;
-import net.mindlee.loontooth.util.MyVideo;
 import net.mindlee.loontooth.util.MyTools;
+import net.mindlee.loontooth.util.MyVideo;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -162,8 +161,9 @@ public class VideoActivity extends BaseActivity {
 									.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED));
 					Log.w("" + info.filePath, "" + info.size);
 
-					// 邪恶的硬编码，问题仍未解决，bluetooth文件夹的内容不能彻底删除，留下一个没截图的诡异文件
-					if (info.filePath.indexOf("luetooth") == -1) {
+					if (info.filePath.toLowerCase().indexOf("bluetooth") != -1) {
+						length--;// 蓝牙目录不予理睬
+					} else {// 正常目录
 						Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(
 								info.filePath, Thumbnails.MICRO_KIND);
 						int width = LoonToothApplication.getScreenWidth() / 4;
@@ -172,10 +172,9 @@ public class VideoActivity extends BaseActivity {
 								bitmap, width, height);
 						info.bitmap = bitmap1;
 						bitmap.recycle();
-					} else {
-						length--;
+						videoList.add(info);
 					}
-					videoList.add(info);
+
 					publishProgress((int) (videoList.size() * 1.0 / length * 100.0));
 					Log.w("视频" + videoList.size(), "总共" + length);
 
