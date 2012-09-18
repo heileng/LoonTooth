@@ -7,11 +7,13 @@ import java.util.List;
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.BrowseAdapter;
 import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
+import net.mindlee.loontooth.gui.BaseActivity.ViewInfo;
 import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPopWindow;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -31,7 +33,6 @@ public class BrowseActivity extends BaseActivity {
 	private String rootPath = Environment.getExternalStorageDirectory()
 			.getPath();
 	private ListView browseListView;
-	private int focusFilesItem;
 	private MyFiles myFiles = new MyFiles(this);
 	private MyDialog myDialog = new MyDialog(this);
 	private PopupWindow downMenuPopWindow;
@@ -53,14 +54,29 @@ public class BrowseActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						File file = new File(paths.get(position));
-						focusFilesItem = position;
+						ViewInfo.FOCUSED_ITEM.setValue(position);
 						if (file.canRead()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(position));
 							} else {
-								downMenuPopWindow.showAsDropDown(view,
-										view.getWidth() / 2,
-										-view.getHeight() / 2);
+								int width = 0;
+								int height = 0;
+								if (view.getY() < parent.getHeight() / 2) {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2;
+								} else {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2
+											- downMenuPopWindow.getHeight()
+											+ 10;
+									Log.w("popWindow宽"
+											+ downMenuPopWindow.getWidth(),
+											"高度"
+													+ downMenuPopWindow
+															.getHeight());
+								}
+								downMenuPopWindow.showAsDropDown(view, width,
+										height);
 							}
 						} else {
 							myDialog.createNoAccessDialog();
@@ -76,14 +92,29 @@ public class BrowseActivity extends BaseActivity {
 					public boolean onItemLongClick(AdapterView<?> parent,
 							View view, int position, long id) {
 						File file = new File(paths.get(position));
-						focusFilesItem = position;
+						ViewInfo.FOCUSED_ITEM.setValue(position);
 						if (file.canRead()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(position));
 							} else {
-								downMenuPopWindow.showAsDropDown(view,
-										view.getWidth() / 2,
-										-view.getHeight() / 2);
+								int width = 0;
+								int height = 0;
+								if (view.getY() < parent.getHeight() / 2) {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2;
+								} else {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2
+											- downMenuPopWindow.getHeight()
+											+ 10;
+									Log.w("popWindow宽"
+											+ downMenuPopWindow.getWidth(),
+											"高度"
+													+ downMenuPopWindow
+															.getHeight());
+								}
+								downMenuPopWindow.showAsDropDown(view, width,
+										height);
 							}
 						} else {
 							myDialog.createNoAccessDialog();
@@ -102,23 +133,31 @@ public class BrowseActivity extends BaseActivity {
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						File file = new File(paths.get(focusFilesItem));
+						File file = new File(paths.get(ViewInfo.FOCUSED_ITEM
+								.getValue()));
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
 
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
 
 							if (file.isDirectory()) {
-								getFileDir(paths.get(focusFilesItem));
+								getFileDir(paths.get(ViewInfo.FOCUSED_ITEM
+										.getValue()));
 							} else {
 								myFiles.openFile(file);
 							}
+						} else if (position == DownMenuItem.DELETE.getIndex()) {
+
+							boolean isDelete = myDialog
+									.createIsSureDeleteDialog();
+							if (isDelete) {
+								file.delete();
+								browseAdapter.removeItem(ViewInfo.FOCUSED_ITEM
+										.getValue());
+								browseAdapter.notifyDataSetChanged();
+							}
 						} else if (position == DownMenuItem.DETAIL.getIndex()) {
 							myFiles.openDetailsDialog(file);
-						} else if (position == DownMenuItem.DELETE.getIndex()) {
-							file.delete();
-							browseAdapter.removeItem(focusFilesItem);
-							browseAdapter.notifyDataSetChanged();
 						}
 					}
 				});

@@ -15,7 +15,7 @@ import net.mindlee.loontooth.R;
  * 
  */
 public class DownMenuAdapter extends BaseAdapter {
-	private int[] icons = { R.drawable.downmenu_share,
+	private int[] icons = { R.drawable.downmenu_send,
 			R.drawable.downmenu_open, R.drawable.downmenu_delete,  R.drawable.downmenu_detail };
 	private String[] items = { DownMenuItem.TRANSFER.name, DownMenuItem.OPEN.name, DownMenuItem.DELETE.name, DownMenuItem.DETAIL.name};
 	private Context context;

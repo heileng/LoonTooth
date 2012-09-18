@@ -3,6 +3,11 @@ package net.mindlee.loontooth.gui;
 import android.app.Application;
 import android.util.Log;
 
+/**
+ * 继承自Application，用于存放全局变量
+ * @author 李伟
+ *
+ */
 public class LoonToothApplication extends Application{
 	private static final String TAG = LoonToothApplication.class.getSimpleName();
 	private static int SCREEN_WIDTH;

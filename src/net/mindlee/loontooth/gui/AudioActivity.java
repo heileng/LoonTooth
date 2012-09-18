@@ -11,6 +11,7 @@ import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
 import net.mindlee.loontooth.util.MyAudio;
+import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPopWindow;
 import net.mindlee.loontooth.util.MyTools;
@@ -37,12 +38,13 @@ import android.widget.PopupWindow;
  * 
  */
 public class AudioActivity extends BaseActivity {
+	private static final String TAG = AudioActivity.class.getSimpleName();
 	private ListView audioListView;
-	private static int focusAudioListViewItem;
 	private PopupWindow downMenuPopWindow;
 	private AudioAdapter audioAdapter;
 	private MyAudio myAudio;
 	private MyPopWindow myPopWindow;
+	private MyDialog myDialog = new MyDialog(this);
 	private MyFiles myFiles = new MyFiles(this);
 
 	private List<AudioInfo> audioList = new ArrayList<AudioInfo>();
@@ -62,9 +64,21 @@ public class AudioActivity extends BaseActivity {
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						downMenuPopWindow.showAsDropDown(view,
-								view.getWidth() / 2, -view.getHeight() / 2);
-						focusAudioListViewItem = position;
+
+						ViewInfo.FOCUSED_ITEM.setValue(position);
+
+						int width = 0;
+						int height = 0;
+						if (view.getY() < parent.getHeight() / 2) {
+							width = view.getWidth() / 2;
+							height = -view.getHeight() / 2;
+						} else {
+							width = view.getWidth() / 2;
+							height = -view.getHeight() / 2
+									- downMenuPopWindow.getHeight() + 10;
+							Log.w("popWindow宽" + downMenuPopWindow.getWidth(), "高度" + downMenuPopWindow.getHeight());
+						}
+						downMenuPopWindow.showAsDropDown(view, width, height);
 					}
 				});
 
@@ -76,21 +90,26 @@ public class AudioActivity extends BaseActivity {
 							int position, long id) {
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
-							sendAudioFiles(focusAudioListViewItem);
+							sendAudioFiles(ViewInfo.FOCUSED_ITEM.getValue());
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
-							myAudio.playMusic(focusAudioListViewItem);
+							myAudio.playMusic(ViewInfo.FOCUSED_ITEM.getValue());
 
 						} else if (position == DownMenuItem.DELETE.getIndex()) {
 							String filePath = audioList
-									.get(focusAudioListViewItem).filePath;
+									.get(ViewInfo.FOCUSED_ITEM.getValue()).filePath;
 							File f = new File(filePath);
-							f.delete();
-							audioAdapter.removeItem(focusAudioListViewItem);
-							audioAdapter.notifyDataSetChanged();
+							boolean isDelete = myDialog
+									.createIsSureDeleteDialog();
+							if (isDelete) {
+								f.delete();
+								audioAdapter.removeItem(ViewInfo.FOCUSED_ITEM
+										.getValue());
+								audioAdapter.notifyDataSetChanged();
+							}
 
 						} else if (position == DownMenuItem.DETAIL.getIndex()) {
-							myAudio.openDetailsDialog(focusAudioListViewItem)
-									.show();
+							myAudio.openDetailsDialog(
+									ViewInfo.FOCUSED_ITEM.getValue()).show();
 						}
 					}
 				});
@@ -218,4 +237,5 @@ public class AudioActivity extends BaseActivity {
 			audioAdapter.notifyDataSetChanged();
 		}
 	}
+
 }

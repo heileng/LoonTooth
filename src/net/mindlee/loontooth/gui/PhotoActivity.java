@@ -9,6 +9,8 @@ import net.mindlee.loontooth.adapter.PhotoAdapter;
 import net.mindlee.loontooth.adapter.PhotoAdapter.PhotoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
+import net.mindlee.loontooth.gui.BaseActivity.ViewInfo;
+import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPhoto;
 import net.mindlee.loontooth.util.MyPopWindow;
@@ -39,13 +41,13 @@ import android.widget.PopupWindow;
  */
 public class PhotoActivity extends BaseActivity {
 	private GridView photoGridView;
-	private int focusPhotoListItem;
 	private PopupWindow downMenuPopWindow;
 	private MyPhoto myPhoto;
 	private MyPopWindow myPopWindow;
 	private PhotoAdapter photoAdapter;
 	private ArrayList<PhotoInfo> photoList = new ArrayList<PhotoInfo>();
 	private MyFiles myFiles = new MyFiles(this);
+	private MyDialog myDialog = new MyDialog(this);
 
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -60,9 +62,19 @@ public class PhotoActivity extends BaseActivity {
 		photoGridView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				downMenuPopWindow.showAsDropDown(view, view.getWidth() / 2,
-						-view.getHeight() / 2);
-				focusPhotoListItem = position;
+				ViewInfo.FOCUSED_ITEM.setValue(position);
+				int width = 0;
+				int height = 0;
+				if (view.getY() < parent.getHeight() / 2) {
+					width = view.getWidth() / 2;
+					height = -view.getHeight() / 2;
+				} else {
+					width = view.getWidth() / 2;
+					height = -view.getHeight() / 2
+							- downMenuPopWindow.getHeight() + 10;
+				}
+
+				downMenuPopWindow.showAsDropDown(view, width, height);
 			}
 		});
 
@@ -74,18 +86,25 @@ public class PhotoActivity extends BaseActivity {
 							int position, long id) {
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
-							sendPhotoFiles(focusPhotoListItem);
+							sendPhotoFiles(ViewInfo.FOCUSED_ITEM.getValue());
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
-							myPhoto.playPhoto(focusPhotoListItem);
+							myPhoto.playPhoto(ViewInfo.FOCUSED_ITEM.getValue());
 						} else if (position == DownMenuItem.DELETE.getIndex()) {
-							String filePath = photoList.get(focusPhotoListItem).filePath;
+							String filePath = photoList
+									.get(ViewInfo.FOCUSED_ITEM.getValue()).filePath;
 							File f = new File(filePath);
-							f.delete();
-							photoAdapter.removeItem(focusPhotoListItem);
-							photoAdapter.notifyDataSetChanged();
+
+							boolean isDelete = myDialog
+									.createIsSureDeleteDialog();
+							if (isDelete) {
+								f.delete();
+								photoAdapter.removeItem(ViewInfo.FOCUSED_ITEM
+										.getValue());
+								photoAdapter.notifyDataSetChanged();
+							}
 						} else if (position == DownMenuItem.DETAIL.getIndex()) {
-							myPhoto.openDetailsDialog(focusPhotoListItem)
-									.show();
+							myPhoto.openDetailsDialog(
+									ViewInfo.FOCUSED_ITEM.getValue()).show();
 						}
 					}
 				});

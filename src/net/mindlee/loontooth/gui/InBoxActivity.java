@@ -39,7 +39,6 @@ public class InBoxActivity extends BaseActivity {
 	private MyDialog myDialog = new MyDialog(this);
 	private List<String> items = null;
 	private List<String> paths = null;
-	private int focusFilesItem;
 	private PopupWindow downMenuPopWindow;
 	private MyPopWindow myPopWindow;
 	private InBoxAdapter inBoxAdapter;
@@ -66,7 +65,7 @@ public class InBoxActivity extends BaseActivity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						File file = new File(paths.get(position));
-						focusFilesItem = position;
+						ViewInfo.FOCUSED_ITEM.setValue(position);
 						if (file.canRead()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(position));
@@ -86,14 +85,23 @@ public class InBoxActivity extends BaseActivity {
 					public boolean onItemLongClick(AdapterView<?> parent,
 							View view, int position, long id) {
 						File file = new File(paths.get(position));
-						focusFilesItem = position;
+						ViewInfo.FOCUSED_ITEM.setValue(position);
 						if (file.canRead()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(position));
 							} else {
-								downMenuPopWindow.showAsDropDown(view,
-										view.getWidth() / 2,
-										-view.getHeight() / 2);
+								int width = 0;
+								int height = 0;
+								if (view.getY() < parent.getHeight() / 2) {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2;
+								} else {
+									width = view.getWidth() / 2;
+									height = -view.getHeight() / 2
+											- downMenuPopWindow.getHeight() + 10;
+									Log.w("popWindow宽" + downMenuPopWindow.getWidth(), "高度" + downMenuPopWindow.getHeight());
+								}
+								downMenuPopWindow.showAsDropDown(view, width, height);
 							}
 						} else {
 							myDialog.createNoAccessDialog();
@@ -108,13 +116,13 @@ public class InBoxActivity extends BaseActivity {
 				new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						File file = new File(paths.get(focusFilesItem));
+						File file = new File(paths.get(ViewInfo.FOCUSED_ITEM.getValue()));
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
 
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							if (file.isDirectory()) {
-								getFileDir(paths.get(focusFilesItem));
+								getFileDir(paths.get(ViewInfo.FOCUSED_ITEM.getValue()));
 							} else {
 								if (myFiles.isFileWriting(file)) {
 									myDialog.createFileIsWritingDialog();
@@ -123,9 +131,14 @@ public class InBoxActivity extends BaseActivity {
 								}
 							}
 						} else if (position == DownMenuItem.DELETE.getIndex()) {
-							file.delete();
-							inBoxAdapter.removeItem(focusFilesItem);
-							inBoxAdapter.notifyDataSetChanged();
+							boolean isDelete = myDialog
+									.createIsSureDeleteDialog();
+							if (isDelete) {
+								file.delete();
+								inBoxAdapter.removeItem(ViewInfo.FOCUSED_ITEM.getValue());
+								inBoxAdapter.notifyDataSetChanged();
+							}
+
 						} else if (position == DownMenuItem.DETAIL.getIndex()) {
 							myFiles.openDetailsDialog(file);
 						}

@@ -9,6 +9,7 @@ import net.mindlee.loontooth.adapter.VideoAdapter;
 import net.mindlee.loontooth.adapter.VideoAdapter.VideoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
+import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPopWindow;
 import net.mindlee.loontooth.util.MyTools;
@@ -37,12 +38,12 @@ import android.widget.PopupWindow;
  */
 public class VideoActivity extends BaseActivity {
 	private ListView videoListView;
-	private int focusVideoListItem;
 	private PopupWindow downMenuPopWindow;
 	private MyVideo myVideo;
 	private MyPopWindow myPopWindow;
 	private VideoAdapter videoAdapter;
 	private MyFiles myFiles = new MyFiles(this);
+	private MyDialog myDialog = new MyDialog(this);
 
 	private ArrayList<VideoInfo> videoList = new ArrayList<VideoInfo>();
 
@@ -62,7 +63,7 @@ public class VideoActivity extends BaseActivity {
 							int position, long id) {
 						downMenuPopWindow.showAsDropDown(view,
 								view.getWidth() / 2, -view.getHeight() / 2);
-						focusVideoListItem = position;
+						ViewInfo.FOCUSED_ITEM.setValue(position);
 					}
 				});
 
@@ -75,18 +76,25 @@ public class VideoActivity extends BaseActivity {
 							int position, long id) {
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
-							sendVideoFiles(focusVideoListItem);
+							sendVideoFiles(ViewInfo.FOCUSED_ITEM.getValue());
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
-							myVideo.playVideo(focusVideoListItem);
+							myVideo.playVideo(ViewInfo.FOCUSED_ITEM.getValue());
 						} else if (position == DownMenuItem.DELETE.getIndex()) {
-							String filePath = videoList.get(focusVideoListItem).filePath;
+							String filePath = videoList
+									.get(ViewInfo.FOCUSED_ITEM.getValue()).filePath;
 							File f = new File(filePath);
-							f.delete();
-							videoAdapter.removeItem(focusVideoListItem);
-							videoAdapter.notifyDataSetChanged();
+
+							boolean isDelete = myDialog
+									.createIsSureDeleteDialog();
+							if (isDelete) {
+								f.delete();
+								videoAdapter.removeItem(ViewInfo.FOCUSED_ITEM
+										.getValue());
+								videoAdapter.notifyDataSetChanged();
+							}
 						} else if (position == DownMenuItem.DETAIL.getIndex()) {
-							myVideo.openDetailsDialog(focusVideoListItem)
-									.show();
+							myVideo.openDetailsDialog(
+									ViewInfo.FOCUSED_ITEM.getValue()).show();
 						}
 					}
 				});

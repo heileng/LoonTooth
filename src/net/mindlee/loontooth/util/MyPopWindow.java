@@ -43,11 +43,15 @@ public class MyPopWindow {
 	 */
 	public PopupWindow createDownMenu() {
 		View downMenuLayout = View.inflate(context, R.layout.downmenu, null);
+		downMenuLayout.getHeight();
 		downMenuPopWindow = new PopupWindow(downMenuLayout,
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
 		downMenuPopWindow.setTouchable(true);
 		downMenuPopWindow.setOutsideTouchable(true);
-		downMenuPopWindow.setWidth(LoonToothApplication.getScreenWidth() / 3);
+		int width = LoonToothApplication.getScreenWidth() / 3;
+		int height = (int)(width * 1.8);
+		downMenuPopWindow.setWidth(width);
+		downMenuPopWindow.setHeight(height);
 		downMenuPopWindow.setBackgroundDrawable(new ColorDrawable(0));
 
 		downMenuListView = (ListView) downMenuLayout

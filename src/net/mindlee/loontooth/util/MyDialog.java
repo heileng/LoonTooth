@@ -1,11 +1,14 @@
 package net.mindlee.loontooth.util;
 
+import java.io.File;
+
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.PopMenuAdapter;
 import net.mindlee.loontooth.adapter.PopMenuAdapter.PopMenuItem;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.MotionEvent;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 public class MyDialog {
 	private Context context;
 	private GridView menuGrid;
+	private boolean isDelete;
 
 	public MyDialog(Context context) {
 		this.context = context;
@@ -36,7 +40,7 @@ public class MyDialog {
 	public void createNoAccessDialog() {
 		new AlertDialog.Builder(context).setTitle("Message")
 				.setMessage("权限不足!")
-				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				.setPositiveButton("OK", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 					}
 				}).show();
@@ -48,12 +52,32 @@ public class MyDialog {
 	public void createFileIsWritingDialog() {
 		new AlertDialog.Builder(context).setTitle("Message")
 				.setMessage("数据正在写入中，不能打开!")
-				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				.setPositiveButton("OK", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 					}
 				}).show();
 	}
-	
+
+	/**
+	 * 删除警告窗口
+	 * 
+	 * @return 如果点击确定，返回true，否则，返回false
+	 */
+	public boolean createIsSureDeleteDialog() {
+		isDelete = false;
+		new AlertDialog.Builder(context).setTitle("提示").setMessage("真的要删除吗？")
+				.setPositiveButton("确定", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						isDelete = true;
+					}
+				}).setNegativeButton("取消", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						isDelete = false;
+					}
+				}).show();
+		return isDelete;
+	}
+
 	/**
 	 * 弹出菜单对话框
 	 */
