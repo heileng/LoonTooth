@@ -71,6 +71,12 @@ public class MyTools {
 		double sizeMbyte = num / 1024 / 1024;// bytes -> M bytes
 		double sizeGbyte = sizeMbyte / 1024;// bytes -> G bytes
 		DecimalFormat df = new DecimalFormat();
+		if (sizeKbyte < 1) {
+			String style = "#0.00B";
+			df.applyPattern(style);
+			res = df.format(size);
+		}
+		
 		if (sizeMbyte < 1) {// KB
 			String style = "#0.00KB";
 			df.applyPattern(style);

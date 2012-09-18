@@ -1,6 +1,7 @@
 package net.mindlee.loontooth.gui;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.Client;
 import net.mindlee.loontooth.bluetooth.Server;
 import net.mindlee.loontooth.util.MyDialog;
@@ -9,6 +10,7 @@ import net.mindlee.loontooth.util.MyTools;
 import android.app.ActionBar;
 import android.app.ActivityGroup;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -31,16 +33,13 @@ import android.widget.Toast;
  * 
  */
 public class MainActivity extends ActivityGroup {
+	private static final String TAG = MainActivity.class.getSimpleName();
 	private PopupWindow deviceSearchedPopWindow;
 	private Server server = new Server(this);
 	private Client client = new Client(this);
-	public static ProgressDialog createConnectionDialog;
-	public static boolean isCreateConnectionSuccess = false;
-	public static boolean isSearchedDevice = false;
-	
+
 	private MyDialog myDialog;
 	private MyPopWindow myPopWindow;
-	private static String TAG = MainActivity.class.getName();
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,11 +55,8 @@ public class MainActivity extends ActivityGroup {
 
 		myDialog = new MyDialog(this);
 		myPopWindow = new MyPopWindow(this);
-		
+
 		deviceSearchedPopWindow = myPopWindow.createDeviceSearchedPopWindow();
-		
-		isCreateConnectionSuccess = false;
-		isSearchedDevice = false;
 
 		TabHost tabHost = (TabHost) this.findViewById(R.id.tabhost);
 		tabHost.setup();
@@ -104,7 +100,7 @@ public class MainActivity extends ActivityGroup {
 		super.onDestroy();
 		server.onStop(this);
 		client.onStop(this);
-		Log.w("MainActivity", "onDestroy");
+		Log.w(TAG, "onDestroy");
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -112,17 +108,23 @@ public class MainActivity extends ActivityGroup {
 			Intent intent = new Intent(MainActivity.this, MainActivity.class);
 			startActivity(intent);
 		} else if (item.getItemId() == R.id.create_connection) {
-			MyTools.logThreadSignature("MainActivity");
-			if (!isCreateConnectionSuccess) {
-				server.onStart(this);
-				createConnectionDialog = ProgressDialog.show(this, "",
-						"正在创建连接中...", true);
-			} else {
-				DisplayToast("连接已创建成功。");
-			}
+			LoonToothApplication.setIsServer();
+			MyTools.logThreadSignature(TAG);
+
+			BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+			Log.w("是否可打开", adapter.isEnabled() + "");
+			/*
+			 * if (adapter.isEnabled() && (System.currentTimeMillis() -
+			 * LoonToothApplication.getConnectConnectStartTime() <= 3000000) &&
+			 * LoonToothApplication.getConnectConnectStartTime() != 0) {
+			 * 
+			 * DisplayToast("连接已创建成功！"); } else {
+			 */
+			server.onStart(this);
+
 		} else if (item.getItemId() == R.id.search_join) {
 			client.onStart(this);
-
+			LoonToothApplication.setIsClient();
 			View view = View.inflate(this, R.layout.activity_main, null);
 			deviceSearchedPopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
@@ -134,7 +136,6 @@ public class MainActivity extends ActivityGroup {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		Log.w("onCreateOptionsMenu", "准备菜单");
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}

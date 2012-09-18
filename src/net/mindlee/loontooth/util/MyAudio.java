@@ -67,12 +67,16 @@ public class MyAudio {
 					}
 				});
 		String name = "\t名称：" + audioList.get(position).title + "\n";
-		String type = audioList.get(position).mimeType + "\n";
-		type = "\t格式：" + type.substring(type.indexOf('/') + 1, type.length());
+		// String type = audioList.get(position).mimeType + "\n";
+
 		String filePath = "\t位置：" + audioList.get(position).filePath;
+		String type = "\t类型: "
+				+ filePath.substring(filePath.indexOf('.') + 1,
+						filePath.length()) + "\n";
+
 		filePath = filePath.substring(0, filePath.lastIndexOf('/')) + '\n';
-		String size = "\t大小：" + MyTools.sizeFormat(audioList.get(position).size)
-				+ "\n";
+		String size = "\t大小："
+				+ MyTools.sizeFormat(audioList.get(position).size) + "\n";
 		String date_modified = "\t修改日期："
 				+ MyTools.secondsToDate(audioList.get(position).dateModified);
 		String str = "" + name + type + filePath + size + date_modified;

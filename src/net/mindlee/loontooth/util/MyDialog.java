@@ -47,6 +47,18 @@ public class MyDialog {
 	}
 
 	/**
+	 * 弹出"权限不足"对话款
+	 */
+	public void createNotConnectSuccess() {
+		new AlertDialog.Builder(context).setTitle("Message")
+				.setMessage("没有与任何设备连接!")
+				.setPositiveButton("OK", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).show();
+	}
+	
+	/**
 	 * 弹出对话框：数据正在写入，不能打开
 	 */
 	public void createFileIsWritingDialog() {

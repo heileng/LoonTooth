@@ -49,7 +49,7 @@ public class MyPopWindow {
 		downMenuPopWindow.setTouchable(true);
 		downMenuPopWindow.setOutsideTouchable(true);
 		int width = LoonToothApplication.getScreenWidth() / 3;
-		int height = (int)(width * 1.8);
+		int height = (int) (width * 1.8);
 		downMenuPopWindow.setWidth(width);
 		downMenuPopWindow.setHeight(height);
 		downMenuPopWindow.setBackgroundDrawable(new ColorDrawable(0));
@@ -114,6 +114,9 @@ public class MyPopWindow {
 						Log.w("地址", deviceSearchedAdapter.getItem(position)
 								.getAddress());
 
+						LoonToothApplication
+								.setSelectedDeviceAddress(deviceSearchedAdapter
+										.getItem(position).getAddress());
 						selectDeviceIntent.putExtra(BluetoothTools.DEVICE,
 								deviceSearchedAdapter.getItem(position));
 						context.sendBroadcast(selectDeviceIntent);
@@ -140,4 +143,5 @@ public class MyPopWindow {
 	public ListView getDeviceSearchedListView() {
 		return deviceSearchedListView;
 	}
+
 }

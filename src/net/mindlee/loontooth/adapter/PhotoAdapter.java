@@ -28,6 +28,7 @@ public class PhotoAdapter extends BaseAdapter {
 		public String size;
 		public String dateModified;
 		public String thumbPath;
+		public String thumbTitle;
 		public Bitmap bitmap;
 
 		public void print() {
@@ -36,6 +37,7 @@ public class PhotoAdapter extends BaseAdapter {
 			Log.v("filePath", filePath + "");
 			Log.v("size", size + "");
 			Log.v("dateModified", dateModified + "");
+			Log.v("thumbTitle", thumbTitle + "");
 			Log.v("thumbPath", thumbPath + "");
 		}
 

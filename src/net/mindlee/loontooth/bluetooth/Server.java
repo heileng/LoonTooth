@@ -1,5 +1,6 @@
 package net.mindlee.loontooth.bluetooth;
 
+import net.mindlee.loontooth.gui.LoonToothApplication;
 import net.mindlee.loontooth.gui.MainActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,9 +30,10 @@ public class Server {
 				// 接收数据
 				TransmitBean data = (TransmitBean) intent.getExtras()
 						.getSerializable(BluetoothTools.DATA);
-				String msg = "请求接受数据" + data.getMsg() + "\n大小：" + data.getSize();
-				Log.w( "服务器", msg);
-				activity.DisplayToast( msg);
+				String msg = "请求接受数据" + data.getMsg() + "\n大小："
+						+ data.getSize();
+				Log.w("服务器", msg);
+				activity.DisplayToast(msg);
 
 			} else if (BluetoothTools.ACTION_CONNECT_SUCCESS.equals(action)) {
 				// 连接成功
@@ -41,10 +43,10 @@ public class Server {
 			} else if (BluetoothTools.ACTION_CREATE_CONNECTION_SUCCESS
 					.equals(action)) {
 				Log.w("服务器", "服务器创建连接成功");
-				MainActivity.createConnectionDialog.dismiss();
-				MainActivity.isCreateConnectionSuccess = true;
+				LoonToothApplication.setConnectSuccess();
 
 				activity.DisplayToast("创建连接成功，等待朋友加入。");
+
 			}
 		}
 	};

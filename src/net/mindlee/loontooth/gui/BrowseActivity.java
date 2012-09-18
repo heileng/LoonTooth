@@ -137,7 +137,7 @@ public class BrowseActivity extends BaseActivity {
 								.getValue()));
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
-
+							myFiles.sendFile(file.getAbsolutePath(), "MP3");
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
 
 							if (file.isDirectory()) {

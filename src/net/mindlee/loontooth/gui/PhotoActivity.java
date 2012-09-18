@@ -3,13 +3,13 @@ package net.mindlee.loontooth.gui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import net.mindlee.loontooth.R;
 import net.mindlee.loontooth.adapter.DownMenuAdapter.DownMenuItem;
 import net.mindlee.loontooth.adapter.PhotoAdapter;
 import net.mindlee.loontooth.adapter.PhotoAdapter.PhotoInfo;
 import net.mindlee.loontooth.bluetooth.BluetoothTools;
 import net.mindlee.loontooth.bluetooth.TransmitBean;
-import net.mindlee.loontooth.gui.BaseActivity.ViewInfo;
 import net.mindlee.loontooth.util.MyDialog;
 import net.mindlee.loontooth.util.MyFiles;
 import net.mindlee.loontooth.util.MyPhoto;
@@ -66,14 +66,18 @@ public class PhotoActivity extends BaseActivity {
 				int width = 0;
 				int height = 0;
 				if (view.getY() < parent.getHeight() / 2) {
-					width = view.getWidth() / 2;
+
 					height = -view.getHeight() / 2;
 				} else {
-					width = view.getWidth() / 2;
 					height = -view.getHeight() / 2
 							- downMenuPopWindow.getHeight() + 10;
 				}
 
+				if (view.getX() > parent.getWidth() / 2) {
+					width = view.getWidth() / 2 - view.getWidth();
+				} else {
+					width = view.getWidth() / 2;
+				}
 				downMenuPopWindow.showAsDropDown(view, width, height);
 			}
 		});
@@ -117,23 +121,28 @@ public class PhotoActivity extends BaseActivity {
 	 * @param position
 	 */
 	private void sendPhotoFiles(int position) {
+
 		TransmitBean data = new TransmitBean();
 		String title = photoList.get(position).title;
 
-		String size = photoList.get(position).size;
-		size = MyTools.sizeFormat(size);
-		data.setMsg(title);
-		data.setSize(size);
+		if (title != null) {
+			String size = photoList.get(position).size;
+			size = MyTools.sizeFormat(size);
+			data.setMsg(title);
+			data.setSize(size);
 
-		String filePath = photoList.get(position).filePath;
-		String fileType = photoList.get(position).mimeType;
-		myFiles.sendFile(filePath, fileType);
+			String filePath = photoList.get(position).filePath;
+			String fileType = photoList.get(position).mimeType;
+			myFiles.sendFile(filePath, fileType);
 
-		Intent sendDataIntent = new Intent(
-				BluetoothTools.ACTION_DATA_TO_SERVICE);
-		sendDataIntent.putExtra(BluetoothTools.DATA, data);
-		sendBroadcast(sendDataIntent);
-		downMenuPopWindow.dismiss();
+			Intent sendDataIntent = new Intent(
+					BluetoothTools.ACTION_DATA_TO_SERVICE);
+			sendDataIntent.putExtra(BluetoothTools.DATA, data);
+			sendBroadcast(sendDataIntent);
+			downMenuPopWindow.dismiss();
+		} else {
+			DisplayToast("只能发送照片，这是一张广告图片？");
+		}
 	}
 
 	protected void onDestroy() {

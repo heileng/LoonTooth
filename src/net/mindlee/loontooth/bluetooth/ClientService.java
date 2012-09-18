@@ -26,7 +26,8 @@ import android.widget.Toast;
  * 
  */
 public class ClientService extends Service {
-	private Context service = this;
+	private static final String TAG = ClientService.class
+			.getSimpleName();
 	// 搜索到的远程设备集合
 	private List<BluetoothDevice> discoveredDevices = new ArrayList<BluetoothDevice>();
 	// 蓝牙适配器
@@ -83,7 +84,7 @@ public class ClientService extends Service {
 			String action = intent.getAction();
 
 			if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-				Toast.makeText(service, "开始搜索", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "开始搜索", Toast.LENGTH_SHORT).show();
 				// 开始搜索
 			} else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				// 发现远程蓝牙设备
@@ -101,7 +102,7 @@ public class ClientService extends Service {
 
 			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
 					.equals(action)) {
-				Toast.makeText(service, "搜索结束", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "搜索结束", Toast.LENGTH_SHORT).show();
 				// 搜索结束
 				if (discoveredDevices.isEmpty()) {
 					// 若未找到设备，则发动未发现设备广播
@@ -178,7 +179,12 @@ public class ClientService extends Service {
 	 */
 	@Override
 	public void onCreate() {
-		Log.w("ClientService", "onCreate");
+		Log.w(TAG, "onCreate");
+
+		Intent startSearchIntent = new Intent(
+				BluetoothTools.ACTION_START_DISCOVERY);
+		sendBroadcast(startSearchIntent);
+
 		// discoveryReceiver的IntentFilter
 		IntentFilter discoveryFilter = new IntentFilter();
 		discoveryFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);

@@ -51,11 +51,15 @@ public class BaseActivity extends Activity {
 				return super.onKeyDown(keyCode, event);
 			} else {
 				lastBackTime = now;
-				Toast.makeText(this, "再点一次将推出", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "再点一次将退出", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	public void DisplayToast(String str) {
+		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
 	}
 
 }

@@ -2,6 +2,9 @@ package net.mindlee.loontooth.bluetooth;
 
 import java.io.Serializable;
 
+import net.mindlee.loontooth.gui.LoonToothApplication;
+import net.mindlee.loontooth.util.MyTools;
+
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
@@ -22,6 +25,7 @@ import android.widget.Toast;
  * 
  */
 public class ServerService extends Service {
+	private static final String TAG = ServerService.class.getSimpleName();
 
 	// 蓝牙适配器
 	private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter
@@ -113,7 +117,7 @@ public class ServerService extends Service {
 	}
 
 	public void onCreate() {
-		Log.w("ServerService", "onCreate");
+		Log.w(TAG, "onCreate");
 		// ControlReceiver的IntentFilter
 		IntentFilter controlFilter = new IntentFilter();
 		controlFilter.addAction(BluetoothTools.ACTION_START_SERVER);
@@ -126,16 +130,22 @@ public class ServerService extends Service {
 		Log.w("之前状态 ", "" + bluetoothAdapter.getState());
 
 		bluetoothAdapter.enable(); // 打开蓝牙
-		// 开启蓝牙发现功能（300秒）
-		Intent discoveryIntent = new Intent(
-				BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-		discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,
-				300);
-		discoveryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(discoveryIntent);
-
-		while (!bluetoothAdapter.isEnabled()) {
-			// Tools.LogCurrentTime();
+		if (!bluetoothAdapter.isDiscovering()) {
+			// 开启蓝牙发现功能（300秒）
+			Intent discoveryIntent = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+			discoveryIntent.putExtra(
+					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+			discoveryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(discoveryIntent);
+			LoonToothApplication.setConnectConnectStartTime(System.currentTimeMillis());
+		}
+		long start = System.currentTimeMillis();
+		while (!bluetoothAdapter.isDiscovering()) {
+			MyTools.LogCurrentTime();
+			if (System.currentTimeMillis() - start >= 5000) {
+				break;
+			}
 		}
 
 		Log.w("之后，蓝牙是否打开", "" + bluetoothAdapter.isEnabled());
@@ -143,7 +153,8 @@ public class ServerService extends Service {
 
 		// 开启后台连接线程
 		new ServerConnectThread(serviceHandler).start();
-		Log.w("服务端创建成功", "ServerService, onCreate");
+
+		Log.w(TAG + "服务端创建成功", "onCreate");
 
 		Intent createConnectionIntent = new Intent(
 				BluetoothTools.ACTION_CREATE_CONNECTION_SUCCESS);
@@ -153,7 +164,7 @@ public class ServerService extends Service {
 	}
 
 	public void onDestroy() {
-		Log.w("ServerService", "onDestroy");
+		Log.w(TAG, "onDestroy");
 		if (connectedThread != null) {
 			connectedThread.isRun = false;
 		}

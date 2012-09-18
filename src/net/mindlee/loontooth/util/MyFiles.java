@@ -3,7 +3,10 @@ package net.mindlee.loontooth.util;
 import java.io.File;
 
 import net.mindlee.loontooth.R;
+import net.mindlee.loontooth.bluetooth.BluetoothShare;
+import net.mindlee.loontooth.gui.LoonToothApplication;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,9 +17,11 @@ public class MyFiles {
 	public static final String VIDEO = "video";
 	public static final String AUDIO = "audio";
 	public static final String IMAGE = "image";
+	private MyDialog myDialog;
 
 	public MyFiles(Context context) {
 		this.context = context;
+		myDialog = new MyDialog(context);
 	}
 
 	/**
@@ -134,6 +139,7 @@ public class MyFiles {
 
 	/**
 	 * 根据修改时差，判断文件是否正在写入中
+	 * 
 	 * @param file
 	 * @return 如果是，返回true，否则false
 	 */
@@ -155,7 +161,6 @@ public class MyFiles {
 	 *            文件类型
 	 */
 	public void sendFile(String filePath, String type) {
-
 		// 调用系统发送页面
 		Intent intent = new Intent();
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -165,21 +170,29 @@ public class MyFiles {
 				"com.android.bluetooth.opp.BluetoothOppLauncherActivity");
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
 		context.startActivity(intent);
-
 		/*
+		 * String isServerOrClient = LoonToothApplication.getIsServerOrClient();
+		 * String selectedDeviceAddress = LoonToothApplication
+		 * .getSelectedDeviceAddress(); boolean isConnectSuccess =
+		 * LoonToothApplication.isConnectSuccess(); if
+		 * (isServerOrClient.equals(LoonToothApplication.IS_CLIENT) &&
+		 * selectedDeviceAddress == null) { myDialog.createNotConnectSuccess();
+		 * } else if (isServerOrClient.equals(LoonToothApplication.IS_SERVER) &&
+		 * !isConnectSuccess) { myDialog.createNotConnectSuccess(); } else {
+		 * 
 		 * System.out.println(filePath);
-		 * System.out.println(MainActivity.deviceAddress);
+		 * System.out.println(LoonToothApplication.getSelectedDeviceAddress());
 		 * System.out.println(Uri.fromFile(new File(filePath)).toString());
 		 * 
 		 * ContentValues values = new ContentValues();
-		 * values.put(BluetoothShare.URI, Uri.fromFile(new
-		 * File(filePath)).toString()); values.put(BluetoothShare.DESTINATION,
-		 * MainActivity.deviceAddress); values.put(BluetoothShare.DIRECTION,
+		 * values.put(BluetoothShare.URI, Uri.fromFile(new File(filePath))
+		 * .toString()); values.put(BluetoothShare.DESTINATION,
+		 * LoonToothApplication.getSelectedDeviceAddress());
+		 * values.put(BluetoothShare.DIRECTION,
 		 * BluetoothShare.DIRECTION_OUTBOUND); Long ts =
 		 * System.currentTimeMillis(); values.put(BluetoothShare.TIMESTAMP, ts);
 		 * context.getContentResolver().insert(BluetoothShare.CONTENT_URI,
-		 * values);
+		 * values); }
 		 */
 	}
-
 }

@@ -19,6 +19,7 @@ import android.util.Log;
  * 
  */
 public class Client {
+	
 	private List<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
 	private MainActivity activity;
 

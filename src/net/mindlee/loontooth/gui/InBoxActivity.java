@@ -119,7 +119,7 @@ public class InBoxActivity extends BaseActivity {
 						File file = new File(paths.get(ViewInfo.FOCUSED_ITEM.getValue()));
 						downMenuPopWindow.dismiss();
 						if (position == DownMenuItem.TRANSFER.getIndex()) {
-
+							myFiles.sendFile(file.getAbsolutePath(), "MP3");
 						} else if (position == DownMenuItem.OPEN.getIndex()) {
 							if (file.isDirectory()) {
 								getFileDir(paths.get(ViewInfo.FOCUSED_ITEM.getValue()));

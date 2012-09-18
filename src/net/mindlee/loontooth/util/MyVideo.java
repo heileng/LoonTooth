@@ -57,13 +57,14 @@ public class MyVideo {
 					}
 				});
 		String name = "\t名称：" + videoList.get(position).title + "\n";
-		String type = videoList.get(position).mimeType + "\n";
-		type = "\t格式：" + type.substring(type.indexOf('/') + 1, type.length());
 
 		String filePath = "\t位置：" + videoList.get(position).filePath;
+		String type = "\t类型: "
+				+ filePath.substring(filePath.indexOf('.') + 1,
+						filePath.length()) + "\n";
 		filePath = filePath.substring(0, filePath.lastIndexOf('/')) + '\n';
-		String size = "\t大小：" + MyTools.sizeFormat(videoList.get(position).size)
-				+ "\n";
+		String size = "\t大小："
+				+ MyTools.sizeFormat(videoList.get(position).size) + "\n";
 		String date_modified = "\t修改日期："
 				+ MyTools.secondsToDate(videoList.get(position).dateModified);
 		String str = "" + name + type + filePath + size + date_modified;
