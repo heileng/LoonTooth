@@ -49,6 +49,4 @@
 [2]: https://github.com/welon/LoonTooth/blob/master/bin/LoonTooth.apk
 [3]: mindlee@me.com
 [4]: http://mindlee.net
-[5]: http://mindlee.net/wp-content/uploads/2012/09/audio_video.png "音频和视频界面"
-[6]: http://mindlee.net/wp-content/uploads/2012/09/photo_overflow.png "图片和菜单"
-[7]: http://mindlee.net/wp-content/uploads/2012/09/connect_about.png "搜索加入和关于界面"
+
