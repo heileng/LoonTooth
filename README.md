@@ -13,7 +13,7 @@
 
 
 ##安装：
-你可以点击这里下载[LoonTooth V1.0][2]，相信你看过软件截图之后，一定知道怎样操作的，我就不多废话了。
+可以点击这里下载[LoonTooth V1.0][2]，看过软件截图之后，应该可以知道怎样操作的，我就不多废话了。
 
      
      
@@ -49,4 +49,6 @@
 [2]: https://github.com/welon/LoonTooth/blob/master/bin/LoonTooth.apk
 [3]: mindlee@me.com
 [4]: http://mindlee.net
-
+[5]: http://mindlee.net/wp-content/uploads/2012/09/audio_video.png "音频和视频界面"
+[6]: http://mindlee.net/wp-content/uploads/2012/09/photo_overflow.png "图片和菜单"
+[7]: http://mindlee.net/wp-content/uploads/2012/09/connect_about.png "搜索加入和关于界面"
